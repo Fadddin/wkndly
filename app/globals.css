@@ -1,0 +1,299 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #ffffff; /* White */
+  --foreground: #2e2e2e; /* Dark Gray */
+  --card: #ffffff; /* White */
+  --card-foreground: #2e2e2e; /* Dark Gray */
+  --popover: #ffffff; /* White */
+  --popover-foreground: #2e2e2e; /* Dark Gray */
+  --primary: #3ba9f4; /* Stronger Blue for emphasis */
+  --primary-foreground: #ffffff; /* Ensure contrast on primary */
+  --secondary: #fff3b0; /* Soft Yellow */
+  --secondary-foreground: #2e2e2e; /* Dark Gray */
+  --muted: #eaf6fe; /* Subtle Light Blue tint */
+  --muted-foreground: #2e2e2e; /* Dark Gray */
+  --accent: #fff3b0; /* Soft Yellow */
+  --accent-foreground: #2e2e2e; /* Dark Gray */
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #a7d8f7; /* Light Blue border */
+  --input: #a7d8f7; /* Light Blue input */
+  --ring: #3ba9f4; /* Stronger Blue focus */
+  --chart-1: #a7d8f7;
+  --chart-2: #fff3b0;
+  --chart-3: #60a5fa;
+  --chart-4: #34d399;
+  --chart-5: #fbbf24;
+  --radius: 0.5rem;
+  --sidebar: #ffffff; /* White */
+  --sidebar-foreground: #2e2e2e; /* Dark Gray */
+  --sidebar-primary: #a7d8f7; /* Light Blue */
+  --sidebar-primary-foreground: #2e2e2e; /* Dark Gray */
+  --sidebar-accent: #fff3b0; /* Soft Yellow */
+  --sidebar-accent-foreground: #2e2e2e; /* Dark Gray */
+  --sidebar-border: #a7d8f7; /* Light Blue */
+  --sidebar-ring: #a7d8f7; /* Light Blue */
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #0a0a0a;
+  --card-foreground: #fafafa;
+  --popover: #0a0a0a;
+  --popover-foreground: #fafafa;
+  --primary: #fafafa;
+  --primary-foreground: #0a0a0a;
+  --secondary: #171717;
+  --secondary-foreground: #fafafa;
+  --muted: #171717;
+  --muted-foreground: #a3a3a3;
+  --accent: #171717;
+  --accent-foreground: #fafafa;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #262626;
+  --input: #262626;
+  --ring: #404040;
+  --chart-1: #60a5fa;
+  --chart-2: #34d399;
+  --chart-3: #fbbf24;
+  --chart-4: #f87171;
+  --chart-5: #a78bfa;
+  --sidebar: #0a0a0a;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #18181b;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #171717;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: #262626;
+  --sidebar-ring: #404040;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Added smooth transitions for theme changes and responsive improvements */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  * {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* Added responsive utilities and custom animations for weekend planner */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+
+  /* Drag and drop visual feedback */
+  .drag-over {
+    @apply border-primary bg-primary/10 border-dashed;
+  }
+
+  .dragging {
+    @apply opacity-50 scale-95;
+  }
+
+  /* Activity category colors - enhanced for better contrast */
+  .activity-outdoor {
+    @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300;
+  }
+
+  .activity-food {
+    @apply bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300;
+  }
+
+  .activity-entertainment {
+    @apply bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300;
+  }
+
+  .activity-relaxation {
+    @apply bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300;
+  }
+
+  .activity-fitness {
+    @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300;
+  }
+
+  .activity-social {
+    @apply bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300;
+  }
+
+  /* Responsive grid improvements */
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+  }
+
+  .grid-schedule {
+    @apply grid gap-6 grid-cols-1 lg:grid-cols-2;
+  }
+
+  .grid-schedule-long {
+    @apply grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-4;
+  }
+
+  /* Full-height layout utilities */
+  .full-height-layout {
+    height: calc(100vh - 4rem);
+  }
+
+  .scrollable-content {
+    @apply overflow-y-auto max-h-full;
+  }
+}
+
+/* Added custom keyframe animations for smooth interactions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Enhanced scrollbar styling for better UX */
+@layer base {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted/30;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+}
+
+/* Mobile-first responsive improvements */
+@media (max-width: 640px) {
+  .container {
+    @apply px-3;
+  }
+
+  .grid-responsive {
+    @apply grid-cols-1 gap-3;
+  }
+
+  .text-2xl {
+    @apply text-xl;
+  }
+
+  .text-xl {
+    @apply text-lg;
+  }
+}
+
+/* Print styles for exported schedules */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    @apply text-black bg-white;
+  }
+
+  .container {
+    @apply max-w-none px-0;
+  }
+}
