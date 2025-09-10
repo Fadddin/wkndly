@@ -12,10 +12,10 @@ export const metadata: Metadata = {
   themeColor: '#111827',
   icons: {
     icon: [
-      { url: '/placeholder.svg', type: 'image/svg+xml' },
+      { url: '/placeholder-logo.png', type: 'image/png' },
     ],
     apple: [
-      { url: '/placeholder.svg' },
+      { url: '/placeholder-logo.png' },
     ],
   },
 }
@@ -32,6 +32,25 @@ export default function RootLayout({
           {children}
           <Analytics />
         </ThemeProvider>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                      console.log('SW registered successfully: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                      console.log('SW registration failed: ', registrationError);
+                    });
+                });
+              } else {
+                console.log('Service workers not supported');
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   )
