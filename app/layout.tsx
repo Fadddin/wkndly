@@ -8,7 +8,16 @@ import { ThemeProvider } from '@/components/theme-provider'
 export const metadata: Metadata = {
   title: 'Weekendly',
   description: 'Make Weekend planning easy',
-
+  manifest: '/manifest.webmanifest',
+  themeColor: '#111827',
+  icons: {
+    icon: [
+      { url: '/placeholder.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/placeholder.svg' },
+    ],
+  },
 }
 
 export default function RootLayout({
