@@ -190,17 +190,31 @@ export function ActivityBrowser() {
                       <span>⏱️</span>
                       {activity.duration}
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                       <span>📍</span>
                       <PlaceSearchDialog activity={activity}>
+                        view
                         <button
-                          className="underline underline-offset-2 hover:text-primary"
+                          className="underline underline-offset-2 hover:text-primary mx-1"
                           onMouseDown={(e) => e.stopPropagation()}
                           onPointerDown={(e) => e.stopPropagation()}
                         >
                           {activity.location}
                         </button>
+                        in your location
                       </PlaceSearchDialog>
+                      {(activity as any)?.googleMapsUrl && (
+                        <a
+                          href={(activity as any).googleMapsUrl as string}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline text-primary"
+                          onMouseDown={(e) => e.stopPropagation()}
+                          onPointerDown={(e) => e.stopPropagation()}
+                        >
+                          Open in Maps
+                        </a>
+                      )}
                     </div>
                   </div>
                   <Badge variant="secondary" className="text-xs">

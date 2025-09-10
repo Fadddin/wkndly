@@ -12,6 +12,7 @@ type PlaceResult = {
   id: string
   name: string
   address: string
+  location?: { lat: number; lng: number }
 }
 
 export function PlaceSearchDialog({
@@ -24,7 +25,25 @@ export function PlaceSearchDialog({
   const { dispatch } = useWeekend()
   const [open, setOpen] = useState(false)
   const [region, setRegion] = useState("")
-  const [query, setQuery] = useState(activity?.name || "")
+  const [query, setQuery] = useState(() => {
+    const cat = activity?.category
+    switch (cat) {
+      case "food":
+        return "restaurant OR cafe"
+      case "outdoor":
+        return "park OR trail"
+      case "entertainment":
+        return "cinema OR music venue"
+      case "relaxation":
+        return "spa OR cafe"
+      case "fitness":
+        return "gym OR climbing"
+      case "social":
+        return "bar OR cafe"
+      default:
+        return "place"
+    }
+  })
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<PlaceResult[]>([])
   const [selectedPlace, setSelectedPlace] = useState<PlaceResult | null>(null)
@@ -54,10 +73,12 @@ export function PlaceSearchDialog({
 
   function addSelectedToActivities() {
     if (!selectedPlace) return
+    const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${selectedPlace.id}`
     const cloned = {
       ...activity,
       location: selectedPlace.address,
       name: `${activity.name} @ ${selectedPlace.name}`,
+      googleMapsUrl: mapsUrl,
     }
     dispatch({ type: "ADD_ACTIVITY", payload: cloned })
     setOpen(false)

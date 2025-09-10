@@ -280,9 +280,19 @@ export function SelectedActivitiesSidebar() {
                             <Clock className="w-2.5 h-2.5" />
                             <span>{activity.duration}</span>
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-2">
                             <MapPin className="w-2.5 h-2.5" />
                             <span>{activity.location}</span>
+                            {(activity as any)?.googleMapsUrl && (
+                              <a
+                                href={(activity as any).googleMapsUrl as string}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[10px] text-primary hover:underline"
+                              >
+                                Open in Maps
+                              </a>
+                            )}
                           </div>
                           <div className="ml-auto">
                             <select

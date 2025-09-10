@@ -83,27 +83,22 @@ function weekendReducer(state: WeekendState, action: WeekendAction): WeekendStat
   switch (action.type) {
     case "SET_SELECTED_ACTIVITIES":
       return { ...state, selectedActivities: action.payload }
-      case "ADD_ACTIVITY": {
-        const existingIndex = state.selectedActivities.findIndex(
-          (a) => a.id === action.payload.id
-        )
-      
-        if (existingIndex >= 0) {
-          // Update/merge existing activity
-          const updated = [...state.selectedActivities]
-          updated[existingIndex] = {
-            ...updated[existingIndex],
-            ...action.payload, // merge fields like location, name
-          }
-          return { ...state, selectedActivities: updated }
-        }
-      
-        // Add new activity
-        return {
-          ...state,
-          selectedActivities: [...state.selectedActivities, action.payload],
-        }
+
+    case "ADD_ACTIVITY": {
+      const existingIndex = state.selectedActivities.findIndex(
+        (a) => a.id === action.payload.id
+      )
+
+      if (existingIndex >= 0) {
+        // Merge updated fields like location or name
+        const updated = [...state.selectedActivities]
+        updated[existingIndex] = { ...updated[existingIndex], ...action.payload }
+        return { ...state, selectedActivities: updated }
       }
+
+      return { ...state, selectedActivities: [...state.selectedActivities, action.payload] }
+    }
+
     case "REMOVE_ACTIVITY":
       return {
         ...state,
@@ -113,21 +108,26 @@ function weekendReducer(state: WeekendState, action: WeekendAction): WeekendStat
           Object.entries(state.activityVibes).filter(([id]) => Number(id) !== action.payload)
         ),
       }
+
     case "SET_SCHEDULED_ACTIVITIES":
       return { ...state, scheduledActivities: action.payload }
-    case "SCHEDULE_ACTIVITY":
-      const existingIndex = state.scheduledActivities.findIndex((sa) => sa.activity.id === action.payload.activity.id)
+
+    case "SCHEDULE_ACTIVITY": {
+      const existingIndex = state.scheduledActivities.findIndex(
+        (sa) => sa.activity.id === action.payload.activity.id
+      )
       const newScheduled = [...state.scheduledActivities]
-      if (existingIndex >= 0) {
-        newScheduled.splice(existingIndex, 1)
-      }
+      if (existingIndex >= 0) newScheduled.splice(existingIndex, 1)
       newScheduled.push(action.payload)
       return { ...state, scheduledActivities: newScheduled }
+    }
+
     case "REMOVE_FROM_SCHEDULE":
       return {
         ...state,
         scheduledActivities: state.scheduledActivities.filter((sa) => sa.activity.id !== action.payload),
       }
+
     case "SET_SEARCH_QUERY":
       return { ...state, searchQuery: action.payload }
     case "SET_SELECTED_CATEGORY":
@@ -154,14 +154,16 @@ function weekendReducer(state: WeekendState, action: WeekendAction): WeekendStat
       return { ...state, dragOverSlot: action.payload }
     case "CLEAR_SCHEDULE":
       return { ...state, scheduledActivities: [] }
-    case "SET_ACTIVITY_VIBE":
+    case "SET_ACTIVITY_VIBE": {
       const { activityId, vibe } = action.payload
       const newVibes = { ...state.activityVibes }
       if (vibe) newVibes[activityId] = vibe
       else delete newVibes[activityId]
       return { ...state, activityVibes: newVibes }
+    }
     case "SET_ACTIVITY_VIBES":
       return { ...state, activityVibes: action.payload }
+
     default:
       return state
   }
@@ -198,12 +200,19 @@ function reconstructScheduledActivities(scheduledData: any[]): ScheduledActivity
   return scheduledData.map((item) => {
     const id = typeof item.activity === "number" ? item.activity : item.activity?.id
     const foundActivity = activities.find((activity) => activity.id === id)
+
+    if (!foundActivity) {
+      console.warn("Missing activity for id:", id)
+      return null // skip broken activities instead of returning object
+    }
+
     return {
       ...item,
-      activity: foundActivity || item.activity,
+      activity: foundActivity,
     }
-  })
+  }).filter(Boolean) as ScheduledActivity[]
 }
+
 
 function reconstructSavedPlans(plansData: any[]): SavedPlan[] {
   if (!Array.isArray(plansData)) return []
@@ -211,20 +220,42 @@ function reconstructSavedPlans(plansData: any[]): SavedPlan[] {
   return plansData.map((plan) => {
     const reconstructedSelected = (plan.selectedActivities || [])
       .map((sel: any) => {
-        const id = typeof sel === "number" ? sel : sel?.id
-        return activities.find((a) => a.id === id)
+        if (typeof sel === "number") return activities.find((a) => a.id === sel)
+        const base = sel?.id ? activities.find((a) => a.id === sel.id) : null
+        if (!base) return sel?.id ? { id: sel.id, name: sel.name, location: sel.location, googleMapsUrl: sel.googleMapsUrl } : null
+        return { ...base, ...(sel.name ? { name: sel.name } : {}), ...(sel.location ? { location: sel.location } : {}), ...(sel.googleMapsUrl ? { googleMapsUrl: sel.googleMapsUrl } : {}) }
       })
       .filter(Boolean) as typeof activities
 
-    const reconstructedScheduled = reconstructScheduledActivities(plan.scheduledActivities || [])
+    const reconstructedScheduled = (plan.scheduledActivities || [])
+      .map((item: any) => {
+        const key = item.activity
+        if (typeof key === "number") {
+          const base = activities.find((a) => a.id === key)
+          return base ? { ...item, activity: base } : null
+        }
+        const base = key?.id ? activities.find((a) => a.id === key.id) : null
+        if (!base) return key?.id ? { ...item, activity: { id: key.id, name: key.name, location: key.location, googleMapsUrl: key.googleMapsUrl } } : null
+        return {
+          ...item,
+          activity: {
+            ...base,
+            ...(key.name ? { name: key.name } : {}),
+            ...(key.location ? { location: key.location } : {}),
+            ...(key.googleMapsUrl ? { googleMapsUrl: key.googleMapsUrl } : {}),
+          },
+        }
+      })
+      .filter(Boolean) as ScheduledActivity[]
 
     return {
       ...plan,
       selectedActivities: reconstructedSelected,
       scheduledActivities: reconstructedScheduled,
-    } as SavedPlan
+    }
   })
 }
+
 
 // ---------- Provider ----------
 export function WeekendProvider({ children }: { children: React.ReactNode }) {
@@ -254,17 +285,12 @@ export function WeekendProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: "SET_SAVED_PLANS", payload: reconstructSavedPlans(savedPlansRaw) })
     dispatch({ type: "SET_ACTIVITY_VIBES", payload: savedVibes })
 
-    // One-time migration
+    // Migration for old plans
     if (Array.isArray(savedPlansRaw) && savedPlansRaw.length > 0 && !localStorage.getItem("weekendly-migrated")) {
       const migrated = savedPlansRaw.map((plan: any) => ({
         ...plan,
-        selectedActivities: (plan.selectedActivities || []).map((sel: any) =>
-          typeof sel === "number" ? sel : sel?.id
-        ),
-        scheduledActivities: (plan.scheduledActivities || []).map((sa: any) => ({
-          ...sa,
-          activity: { id: typeof sa.activity === "number" ? sa.activity : sa.activity?.id },
-        })),
+        selectedActivities: plan.selectedActivities || [],
+        scheduledActivities: plan.scheduledActivities || [],
       }))
       saveToStorage("weekendly-saved-plans", migrated)
       localStorage.setItem("weekendly-migrated", "true")
@@ -277,22 +303,31 @@ export function WeekendProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!hasHydratedRef.current) return
     if (state.autoSave && typeof window !== "undefined") {
-      const selectedActivityIds = state.selectedActivities.map((activity) => activity.id)
-  
-      // only persist savedPlans if not empty
+      const selectedActivityIds = state.selectedActivities.map((a) => a.id)
+
+      const baseById = (id: number) => activities.find((b) => b.id === id)
+      const serializeActivity = (a: any) => {
+        const base = baseById(a.id)
+        if (!base) return { id: a.id, name: a.name, location: a.location, googleMapsUrl: a.googleMapsUrl }
+        const payload: any = { id: a.id }
+        if (a.name !== base.name) payload.name = a.name
+        if (a.location !== base.location) payload.location = a.location
+        if (a.googleMapsUrl) payload.googleMapsUrl = a.googleMapsUrl
+        return Object.keys(payload).length === 1 ? a.id : payload
+      }
+
       if (state.savedPlans.length > 0) {
         const plansToSave = state.savedPlans.map((plan) => ({
           ...plan,
-          selectedActivities: plan.selectedActivities.map((a) => a.id),
+          selectedActivities: plan.selectedActivities.map((a) => serializeActivity(a)),
           scheduledActivities: plan.scheduledActivities.map((sa) => ({
             ...sa,
-            activity: { id: sa.activity.id },
+            activity: serializeActivity(sa.activity),
           })),
         }))
-  
         saveToStorage("weekendly-saved-plans", plansToSave)
       }
-  
+
       saveToStorage("weekendly-selected-activity-ids", selectedActivityIds)
       saveToStorage("weekendly-scheduled-activities", state.scheduledActivities)
       saveToStorage("weekendly-theme", state.selectedTheme)
@@ -318,8 +353,6 @@ export function WeekendProvider({ children }: { children: React.ReactNode }) {
 
 export function useWeekend() {
   const context = useContext(WeekendContext)
-  if (!context) {
-    throw new Error("useWeekend must be used within a WeekendProvider")
-  }
+  if (!context) throw new Error("useWeekend must be used within a WeekendProvider")
   return context
 }

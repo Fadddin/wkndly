@@ -220,7 +220,24 @@ export function WeekendSchedule() {
                               </div>
                               <div className="flex-1">
                                 <p className="text-sm font-medium">{scheduledActivity.activity.name}</p>
-                                <p className="text-xs text-muted-foreground">{scheduledActivity.activity.duration}</p>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                  <span>{scheduledActivity.activity.duration}</span>
+                                  {(scheduledActivity.activity as any)?.googleMapsUrl ? (
+                                    <>
+                                      <span>•</span>
+                                      <a
+                                        href={(scheduledActivity.activity as any).googleMapsUrl as string}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:underline"
+                                      >
+                                        {scheduledActivity.activity.location}
+                                      </a>
+                                    </>
+                                  ) : (
+                                    <span>{scheduledActivity.activity.location}</span>
+                                  )}
+                                </div>
                               </div>
                               <div className="flex items-center gap-2">
                                 <select
