@@ -18,9 +18,11 @@ type PlaceResult = {
 export function PlaceSearchDialog({
   activity,
   children,
+  onPlaceSelected,
 }: {
   activity: any
   children: React.ReactNode
+  onPlaceSelected?: (place: PlaceResult, mapsUrl: string) => void
 }) {
   const { dispatch } = useWeekend()
   const [open, setOpen] = useState(false)
@@ -74,6 +76,11 @@ export function PlaceSearchDialog({
   function addSelectedToActivities() {
     if (!selectedPlace) return
     const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${selectedPlace.id}`
+    if (onPlaceSelected) {
+      onPlaceSelected(selectedPlace, mapsUrl)
+      setOpen(false)
+      return
+    }
     const cloned = {
       ...activity,
       location: selectedPlace.address,

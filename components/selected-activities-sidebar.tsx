@@ -11,11 +11,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar, CalendarDays, X, Clock, MapPin, Plus, Sparkles } from "lucide-react"
 import { useWeekend } from "@/lib/weekend-context"
 import type { ActivityVibe } from "@/lib/weekend-context"
+import { PlaceSearchDialog } from "@/components/place-search-dialog"
 
 export function SelectedActivitiesSidebar() {
   const { state, dispatch } = useWeekend()
   const { selectedActivities, activityVibes } = state
   const [isCustomDialogOpen, setIsCustomDialogOpen] = useState(false)
+  const [customPlace, setCustomPlace] = useState<{ id: string; name: string; address: string; mapsUrl: string } | null>(null)
   const [customActivity, setCustomActivity] = useState({
     name: "",
     category: "outdoor",
@@ -50,19 +52,24 @@ export function SelectedActivitiesSidebar() {
       food: "bg-yellow-100 text-yellow-700",
     }
 
+    const finalLocation = customPlace?.address || customActivity.location
+    const finalName = customPlace ? `${customActivity.name} @ ${customPlace.name}` : customActivity.name
+
     const newActivity = {
       id: Date.now(), // Simple ID generation
-      name: customActivity.name,
+      name: finalName,
       category: customActivity.category,
       duration: customActivity.duration,
-      location: customActivity.location,
+      location: finalLocation,
       mood: customActivity.mood,
       icon: Sparkles, // Default icon for custom activities
       color: categoryColors[customActivity.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700",
+      ...(customPlace?.mapsUrl ? { googleMapsUrl: customPlace.mapsUrl } : {}),
     }
 
     dispatch({ type: "ADD_ACTIVITY", payload: newActivity })
     setCustomActivity({ name: "", category: "outdoor", duration: "1-2 hours", location: "Local", mood: "Relaxing" })
+    setCustomPlace(null)
     setIsCustomDialogOpen(false)
   }
 
@@ -161,8 +168,11 @@ export function SelectedActivitiesSidebar() {
                   <div>
                     <Label htmlFor="location">Location</Label>
                     <Select
-                      value={customActivity.location}
-                      onValueChange={(value) => setCustomActivity((prev) => ({ ...prev, location: value }))}
+                      value={customPlace ? "Custom (maps)" : customActivity.location}
+                      onValueChange={(value) => {
+                        setCustomPlace(null)
+                        setCustomActivity((prev) => ({ ...prev, location: value }))
+                      }}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -174,6 +184,42 @@ export function SelectedActivitiesSidebar() {
                         <SelectItem value="Online">Online</SelectItem>
                       </SelectContent>
                     </Select>
+                    <div className="mt-2 text-[10px] text-muted-foreground">
+                      {customPlace ? (
+                        <div className="flex items-center gap-2">
+                          <span className="truncate">Selected: {customPlace.address}</span>
+                          <a
+                            href={customPlace.mapsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            Open in Maps
+                          </a>
+                          <PlaceSearchDialog
+                            activity={{ name: customActivity.name || "Custom Activity", category: customActivity.category }}
+                            onPlaceSelected={(place, mapsUrl) =>
+                              setCustomPlace({ id: place.id, name: place.name, address: place.address, mapsUrl })
+                            }
+                          >
+                            <button className="underline underline-offset-2 hover:text-primary">
+                              Change
+                            </button>
+                          </PlaceSearchDialog>
+                        </div>
+                      ) : (
+                        <PlaceSearchDialog
+                          activity={{ name: customActivity.name || "Custom Activity", category: customActivity.category }}
+                          onPlaceSelected={(place, mapsUrl) =>
+                            setCustomPlace({ id: place.id, name: place.name, address: place.address, mapsUrl })
+                          }
+                        >
+                          <button className="underline underline-offset-2 hover:text-primary">
+                            Pick from maps
+                          </button>
+                        </PlaceSearchDialog>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <Label htmlFor="mood">Mood</Label>
@@ -282,7 +328,15 @@ export function SelectedActivitiesSidebar() {
                           </div>
                           <div className="flex items-center gap-2">
                             <MapPin className="w-2.5 h-2.5" />
-                            <span>{activity.location}</span>
+                            <PlaceSearchDialog activity={activity}>
+                              
+                              <button
+                                className="underline underline-offset-2 hover:text-primary mx-1"
+                              >
+                                {activity.location}
+                              </button>
+                          
+                            </PlaceSearchDialog>
                             {(activity as any)?.googleMapsUrl && (
                               <a
                                 href={(activity as any).googleMapsUrl as string}

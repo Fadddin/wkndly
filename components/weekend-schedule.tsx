@@ -227,6 +227,7 @@ export function WeekendSchedule() {
                           {weekendDays.find((d) => d.key === isScheduled.day)?.name.slice(0, 3)} {isScheduled.timeSlot.slice(0, 5)}
                         </Badge>
                       )}
+                      
                     </div>
                   </div>
                 )
