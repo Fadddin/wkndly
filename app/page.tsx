@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Settings, Share2, CalendarPlus } from "lucide-react"
+import { ArrowLeft, Settings, Share2, CalendarPlus, Menu } from "lucide-react"
 import { WeekendProvider, useWeekend } from "@/lib/weekend-context"
 import { themes, getUpcomingHolidays } from "@/lib/weekend-data"
 import { ActivityBrowser } from "@/components/activity-browser"
@@ -21,7 +21,7 @@ function WeekendlyAppContent() {
   const upcomingHolidays = getUpcomingHolidays()
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
       <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50 flex-shrink-0">
         <div className="container mx-auto px-4 py-4">
@@ -57,19 +57,30 @@ function WeekendlyAppContent() {
               )}
 
               {/* Action Buttons */}
-              <SavedPlansDialog>
-                <Button variant="outline" size="sm">
-                  <CalendarPlus className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Saved Plans</span>
-                </Button>
-              </SavedPlansDialog>
+              <div className="hidden sm:flex items-center gap-2">
+                <SavedPlansDialog>
+                  <Button variant="outline" size="sm">
+                    <CalendarPlus className="w-4 h-4 mr-2" />
+                    <span>Saved Plans</span>
+                  </Button>
+                </SavedPlansDialog>
 
-              <ExportShareDialog>
-                <Button variant="outline" size="sm">
-                  <Share2 className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Share</span>
-                </Button>
-              </ExportShareDialog>
+                <ExportShareDialog>
+                  <Button variant="outline" size="sm">
+                    <Share2 className="w-4 h-4 mr-2" />
+                    <span>Share</span>
+                  </Button>
+                </ExportShareDialog>
+
+                <PersonalizationDialog>
+                  <Button variant="outline" size="sm">
+                    <Settings className="w-4 h-4 mr-2" />
+                    <span>Settings</span>
+                  </Button>
+                </PersonalizationDialog>
+
+                <ThemeToggle />
+              </div>
 
               {/* Mobile: Selected Activities Drawer */}
               {currentView === "browse" && (
@@ -85,30 +96,56 @@ function WeekendlyAppContent() {
                 </Sheet>
               )}
 
-              <PersonalizationDialog>
-                <Button variant="outline" size="sm">
-                  <Settings className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Settings</span>
-                </Button>
-              </PersonalizationDialog>
-
-              <ThemeToggle />
+              {/* Mobile: Hamburger menu for remaining actions */}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm" className="sm:hidden">
+                    <Menu className="w-4 h-4 mr-2" />
+                    Menu
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="p-4 w-64">
+                  <div className="flex flex-col gap-2">
+                    <SavedPlansDialog>
+                      <Button variant="outline" className="w-full justify-start">
+                        <CalendarPlus className="w-4 h-4 mr-2" />
+                        Saved Plans
+                      </Button>
+                    </SavedPlansDialog>
+                    <ExportShareDialog>
+                      <Button variant="outline" className="w-full justify-start">
+                        <Share2 className="w-4 h-4 mr-2" />
+                        Share
+                      </Button>
+                    </ExportShareDialog>
+                    <PersonalizationDialog>
+                      <Button variant="outline" className="w-full justify-start">
+                        <Settings className="w-4 h-4 mr-2" />
+                        Settings
+                      </Button>
+                    </PersonalizationDialog>
+                    <div className="pt-2">
+                      <ThemeToggle />
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden min-h-0">
         {currentView === "browse" ? (
           <>
             {/* Activity Browser - Full height with scroll */}
-            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-              <div className="flex-1 lg:flex-[3] overflow-hidden">
+            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
+              <div className="flex-1 lg:flex-[3] overflow-hidden min-h-0">
                 <ActivityBrowser />
               </div>
 
               {/* Selected Activities Sidebar - Fixed position on larger screens */}
-              <div className="hidden lg:block lg:flex-[1] bg-card/50 backdrop-blur-sm pb-4">
+              <div className="hidden lg:block lg:flex-[1] bg-card/50 backdrop-blur-sm pb-4 min-h-0">
                 <SelectedActivitiesSidebar />
               </div>
             </div>

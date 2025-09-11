@@ -133,9 +133,9 @@ export function ActivityBrowser() {
           value={selectedCategory}
           onValueChange={(value) => dispatch({ type: "SET_SELECTED_CATEGORY", payload: value })}
         >
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7">
+          <TabsList className="flex w-full max-w-full overflow-x-auto no-scrollbar gap-1 lg:grid lg:grid-cols-7 lg:gap-0">
             {categories.map((category) => (
-              <TabsTrigger key={category.id} value={category.id} className="text-xs">
+              <TabsTrigger key={category.id} value={category.id} className="text-xs whitespace-nowrap flex-shrink-0">
                 {category.name}
               </TabsTrigger>
             ))}
@@ -144,7 +144,7 @@ export function ActivityBrowser() {
       </div>
 
       {/* Activity grid */}
-      <div className="flex-1 p-4 lg:p-6">
+      <div className="flex-1 p-3 sm:p-4 lg:p-6 min-h-0">
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
           {filteredActivities.map((activity) => {
             const IconComponent = activity.icon

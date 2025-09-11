@@ -74,8 +74,8 @@ export function SelectedActivitiesSidebar() {
   }
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-b from-background to-muted/20 border-1 rounded-2xl m-2">
-      <div className="flex-shrink-0 p-4 lg:p-6 border-b bg-card/80 backdrop-blur-sm shadow-sm rounded-2xl">
+    <div className="h-full min-h-0 flex flex-col bg-gradient-to-b from-background to-muted/20 border-1 rounded-2xl m-2">
+      <div className="flex-shrink-0 p-3 sm:p-4 lg:p-6 border-b bg-card/80 backdrop-blur-sm shadow-sm rounded-2xl">
         <div className="flex items-center justify-between mb-3 rounded-2xl">
           <h3 className="text-lg font-bold flex items-center gap-2 text-primary">
             <div className="p-1.5 rounded-lg bg-primary/10">
@@ -258,7 +258,7 @@ export function SelectedActivitiesSidebar() {
       </div>
 
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto p-4 lg:p-6">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 min-h-0">
         {selectedActivities.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
@@ -387,7 +387,7 @@ export function SelectedActivitiesSidebar() {
       </div>
 
       {selectedActivities.length > 0 && (
-        <div className="flex-shrink-0 p-4 lg:p-6 border-t bg-gradient-to-t from-card/80 to-background/50 backdrop-blur-sm rounded-2xl">
+        <div className="flex-shrink-0 p-3 sm:p-4 lg:p-6 border-t bg-gradient-to-t from-card/80 to-background/50 backdrop-blur-sm rounded-2xl">
           <Button
             className="w-full h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
             size="lg"
