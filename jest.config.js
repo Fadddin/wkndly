@@ -1,5 +1,11 @@
 /** @type {import('jest').Config} */
-const config = {
+const nextJest = require('next/jest')
+
+const createJestConfig = nextJest({
+  dir: './',
+})
+
+const customJestConfig = {
   testEnvironment: 'jest-environment-jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
@@ -7,11 +13,8 @@ const config = {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
-  transform: {
-    '^.+\\.(t|j)sx?$': 'babel-jest',
-  },
 }
 
-module.exports = config
+module.exports = createJestConfig(customJestConfig)
 
 
