@@ -74,7 +74,7 @@ export function SelectedActivitiesSidebar() {
   }
 
   return (
-    <div className="h-full min-h-0 flex flex-col bg-gradient-to-b from-background to-muted/20 border-1 rounded-2xl m-2">
+    <div className="h-[100vh] lg:h-[calc(100vh-7rem)] min-h-0 flex flex-col bg-gradient-to-b from-background to-muted/20 border-1 rounded-2xl m-2">
       <div className="flex-shrink-0 p-3 sm:p-4 lg:p-6 border-b bg-card/80 backdrop-blur-sm shadow-sm rounded-2xl">
         <div className="flex items-center justify-between mb-3 rounded-2xl">
           <h3 className="text-lg font-bold flex items-center gap-2 text-primary">
@@ -272,7 +272,7 @@ export function SelectedActivitiesSidebar() {
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-1">
             {selectedActivities.map((activity, index) => {
               const IconComponent = activity.icon
               const hasValidIcon = IconComponent && typeof IconComponent === "function"
@@ -297,7 +297,7 @@ export function SelectedActivitiesSidebar() {
                   }`}
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <CardContent className="px-3 sm:px-4 py-3">
+                  <CardContent className="px-3 sm:px-4 py-2">
                     <div className="flex items-start gap-2">
                       <div className={`p-1.5 sm:p-2 rounded-lg ${activity.color} flex-shrink-0 shadow-sm`}>
                         {hasValidIcon ? <IconComponent className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> : <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
@@ -321,9 +321,9 @@ export function SelectedActivitiesSidebar() {
                         </div>
 
                         {/* Meta Info */}
-                        <div className="mt-2 space-y-2">
+                        <div className="mt-1.5 space-y-1">
                           {/* Duration and Location Row */}
-                          <div className="space-y-1">
+                          <div className="space-y-0.5">
                             <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
                               <Clock className="w-2.5 h-2.5 flex-shrink-0" />
                               <span className="whitespace-nowrap">{activity.duration}</span>
@@ -351,35 +351,31 @@ export function SelectedActivitiesSidebar() {
                               </div>
                             </div>
                           </div>
-                          
-                          {/* Vibe Selector Row */}
-                          <div className="flex justify-end">
-                            <select
-                              className="text-[10px] border rounded px-2 py-1 bg-background min-w-0 max-w-[120px]"
-                              value={activityVibes[activity.id] || ""}
-                              onChange={(e) =>
-                                dispatch({
-                                  type: "SET_ACTIVITY_VIBE",
-                                  payload: { activityId: activity.id, vibe: (e.target.value || null) as ActivityVibe | null },
-                                })
-                              }
-                            >
-                              <option value="">Vibe</option>
-                              <option value="happy">Happy</option>
-                              <option value="relaxed">Relaxed</option>
-                              <option value="energetic">Energetic</option>
-                            </select>
-                          </div>
                         </div>
 
-                        {/* Badge */}
-                        <div className="mt-2">
+                        {/* Bottom Row: Badge and Vibe Selector */}
+                        <div className="mt-1.5 flex items-center justify-between">
                           <Badge
                             variant="default"
-                            className="text-[10px] font-medium bg-secondary text-secondary-foreground px-2 py-0.5 inline-block"
+                            className="text-[10px] font-medium bg-secondary text-secondary-foreground px-2 py-0.5"
                           >
                             {activity.mood}
                           </Badge>
+                          <select
+                            className="text-[10px] border rounded px-2 py-1 bg-background min-w-0 max-w-[100px]"
+                            value={activityVibes[activity.id] || ""}
+                            onChange={(e) =>
+                              dispatch({
+                                type: "SET_ACTIVITY_VIBE",
+                                payload: { activityId: activity.id, vibe: (e.target.value || null) as ActivityVibe | null },
+                              })
+                            }
+                          >
+                            <option value="">Vibe</option>
+                            <option value="happy">Happy</option>
+                            <option value="relaxed">Relaxed</option>
+                            <option value="energetic">Energetic</option>
+                          </select>
                         </div>
                       </div>
                     </div>
