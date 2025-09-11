@@ -73,7 +73,7 @@ export function PersonalizationDialog({ children }: PersonalizationDialogProps) 
               <Palette className="w-4 h-4" />
               Weekend Theme
             </Label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {Object.entries(themes).map(([themeId, theme]) => {
                 const IconComponent = theme.icon
                 return (
@@ -84,11 +84,11 @@ export function PersonalizationDialog({ children }: PersonalizationDialogProps) 
                     onClick={() => handleThemeChange(themeId as keyof typeof themes)}
                     className="justify-start h-auto w-full p-3"
                   >
-                    <div className="flex gap-2">
-                      <IconComponent className="w-4 h-4 my-1" />
-                      <div className="text-left  flex-1 min-w-0">
-                        <div className="text-sm font-medium">{theme.name}</div>
-                        <div className="text-xs opacity-70 break-words overflow-hidden text-ellipsis whitespace-normal">{theme.description}</div>
+                    <div className="flex gap-2 w-full">
+                      <IconComponent className="w-4 h-4 my-1 flex-shrink-0" />
+                      <div className="text-left flex-1 min-w-0 overflow-hidden">
+                        <div className="text-sm font-medium truncate">{theme.name}</div>
+                        <div className="text-xs opacity-70 break-words whitespace-normal leading-tight line-clamp-2">{theme.description}</div>
                       </div>
                     </div>
                   </Button>

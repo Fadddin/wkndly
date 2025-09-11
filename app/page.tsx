@@ -32,9 +32,9 @@ function WeekendlyAppContent() {
                   variant="ghost"
                   size="sm"
                   onClick={() => dispatch({ type: "SET_CURRENT_VIEW", payload: "browse" })}
-                  className="lg:hidden"
+                  className="lg:hidden px-2 py-1 h-7 text-xs border"
                 >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  <ArrowLeft className="w-3 h-3 mr-1" />
                   Back
                 </Button>
               )}
@@ -139,19 +139,19 @@ function WeekendlyAppContent() {
         {currentView === "browse" ? (
           <>
             {/* Activity Browser - Full height with scroll */}
-            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
+            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 mb-6">
               <div className="flex-1 lg:flex-[3] overflow-hidden min-h-0">
                 <ActivityBrowser />
               </div>
 
               {/* Selected Activities Sidebar - Fixed position on larger screens */}
-              <div className="hidden lg:block lg:flex-[1] bg-card/50 backdrop-blur-sm pb-4 min-h-0">
+              <div className="hidden lg:block lg:flex-[1] bg-card/50 backdrop-blur-sm pb-4 min-h-0 mb-2">
                 <SelectedActivitiesSidebar />
               </div>
             </div>
           </>
         ) : (
-          <div className="flex-1 overflow-auto ">
+          <div className="flex-1 overflow-auto mb-4">
             <WeekendSchedule />
           </div>
         )}

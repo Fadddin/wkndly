@@ -10,6 +10,7 @@ import { Search, Plus } from "lucide-react"
 import { PlaceSearchDialog } from "@/components/place-search-dialog"
 import { useWeekend } from "@/lib/weekend-context"
 import { activities, categories, themes } from "@/lib/weekend-data"
+import { toast } from "@/hooks/use-toast"
 
 export function ActivityBrowser() {
   const { state, dispatch } = useWeekend()
@@ -39,10 +40,24 @@ export function ActivityBrowser() {
   }, [currentTheme.suggestedMoods])
 
   const addRecommendedActivities = () => {
+    let addedCount = 0
     getRecommendedActivities.forEach((activity) => {
       if (!selectedActivities.find((a) => a.id === activity.id)) {
         dispatch({ type: "ADD_ACTIVITY", payload: activity })
+        addedCount += 1
       }
+    })
+    return addedCount
+  }
+
+  const handleAddPicksClick = () => {
+    const added = addRecommendedActivities()
+    toast({
+      title: added > 0 ? `Added ${added} ${added === 1 ? "pick" : "picks"}` : "You're all set",
+      description:
+        added > 0
+          ? `Recommended activities for ${currentTheme.name} were added to your plan.`
+          : `All ${currentTheme.name} picks are already in your plan.`,
     })
   }
 
@@ -62,7 +77,12 @@ export function ActivityBrowser() {
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-foreground">Browse Activities</h2>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={addRecommendedActivities}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAddPicksClick}
+              className="transition-transform active:scale-95"
+            >
               <currentTheme.icon className="w-4 h-4 mr-2" />
               Add {currentTheme.name.split(" ")[0]} Picks
             </Button>
@@ -78,9 +98,9 @@ export function ActivityBrowser() {
                 <currentTheme.icon className="w-4 h-4" />
                 <span>{getRecommendedActivities.length} recommended for {currentTheme.name}</span>
               </div>
-              <Button variant="outline" size="sm" onClick={addRecommendedActivities}>
+              {/* <Button variant="outline" size="sm" onClick={addRecommendedActivities}>
                 Add Picks
-              </Button>
+              </Button> */}
             </div>
 
             {/* Full card only on very large screens */}

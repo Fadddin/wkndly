@@ -4,6 +4,7 @@ import { GeistMono } from 'geist/font/mono'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
   title: 'Weekendly',
@@ -32,6 +33,7 @@ export default function RootLayout({
           {children}
           <Analytics />
         </ThemeProvider>
+        <Toaster />
         <script
           dangerouslySetInnerHTML={{
             __html: `

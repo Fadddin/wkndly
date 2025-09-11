@@ -117,7 +117,7 @@ export function SelectedActivitiesSidebar() {
               </DialogHeader>
               <div className="space-y-4 pt-4">
                 <div>
-                  <Label htmlFor="activity-name">Activity Name</Label>
+                  <Label className="mb-1" htmlFor="activity-name">Activity Name</Label>
                   <Input
                     id="activity-name"
                     placeholder="e.g., Visit local art gallery"
@@ -297,16 +297,16 @@ export function SelectedActivitiesSidebar() {
                   }`}
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <CardContent className="px-4">
+                  <CardContent className="px-3 sm:px-4 py-3">
                     <div className="flex items-start gap-2">
-                      <div className={`p-2 rounded-lg ${activity.color} flex-shrink-0 shadow-sm`}>
-                        {hasValidIcon ? <IconComponent className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}
+                      <div className={`p-1.5 sm:p-2 rounded-lg ${activity.color} flex-shrink-0 shadow-sm`}>
+                        {hasValidIcon ? <IconComponent className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> : <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
                       </div>
 
                       <div className="flex-1 min-w-0">
                         {/* Title + Remove Button */}
-                        <div className="flex items-center justify-between gap-1">
-                          <h4 className="font-medium text-xs leading-snug text-foreground">{activity.name}</h4>
+                        <div className="flex items-start justify-between gap-2">
+                          <h4 className="font-medium text-xs leading-snug text-foreground break-words pr-1">{activity.name}</h4>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -314,43 +314,48 @@ export function SelectedActivitiesSidebar() {
                               e.stopPropagation()
                               removeActivity(activity.id)
                             }}
-                            className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive"
+                            className="h-5 w-5 sm:h-6 sm:w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive flex-shrink-0"
                           >
-                            <X className="w-3 h-3" />
+                            <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                           </Button>
                         </div>
 
                         {/* Meta Info */}
-                        <div className="flex items-center gap-2 mt-2 text-[10px] text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-2.5 h-2.5" />
-                            <span>{activity.duration}</span>
+                        <div className="mt-2 space-y-2">
+                          {/* Duration and Location Row */}
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                              <Clock className="w-2.5 h-2.5 flex-shrink-0" />
+                              <span className="whitespace-nowrap">{activity.duration}</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground min-w-0">
+                              <MapPin className="w-2.5 h-2.5 flex-shrink-0" />
+                              <div className="flex items-center gap-1 min-w-0 flex-1">
+                                <PlaceSearchDialog activity={activity}>
+                                  <button
+                                    className="underline underline-offset-2 hover:text-primary text-left truncate max-w-[120px]"
+                                  >
+                                    {activity.location}
+                                  </button>
+                                </PlaceSearchDialog>
+                                {(activity as any)?.googleMapsUrl && (
+                                  <a
+                                    href={(activity as any).googleMapsUrl as string}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[10px] text-primary hover:underline whitespace-nowrap flex-shrink-0"
+                                  >
+                                    Maps
+                                  </a>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <MapPin className="w-2.5 h-2.5" />
-                            <PlaceSearchDialog activity={activity}>
-                              
-                              <button
-                                className="underline underline-offset-2 hover:text-primary mx-1"
-                              >
-                                {activity.location}
-                              </button>
                           
-                            </PlaceSearchDialog>
-                            {(activity as any)?.googleMapsUrl && (
-                              <a
-                                href={(activity as any).googleMapsUrl as string}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[10px] text-primary hover:underline"
-                              >
-                                Open in Maps
-                              </a>
-                            )}
-                          </div>
-                          <div className="ml-auto">
+                          {/* Vibe Selector Row */}
+                          <div className="flex justify-end">
                             <select
-                              className="text-[10px] border rounded px-1 py-0.5 bg-background"
+                              className="text-[10px] border rounded px-2 py-1 bg-background min-w-0 max-w-[120px]"
                               value={activityVibes[activity.id] || ""}
                               onChange={(e) =>
                                 dispatch({
@@ -371,7 +376,7 @@ export function SelectedActivitiesSidebar() {
                         <div className="mt-2">
                           <Badge
                             variant="default"
-                            className="text-[10px] font-medium bg-secondary text-secondary-foreground px-2 py-0.5"
+                            className="text-[10px] font-medium bg-secondary text-secondary-foreground px-2 py-0.5 inline-block"
                           >
                             {activity.mood}
                           </Badge>

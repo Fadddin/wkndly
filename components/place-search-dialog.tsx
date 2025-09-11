@@ -28,6 +28,53 @@ export function PlaceSearchDialog({
   const [open, setOpen] = useState(false)
   const [region, setRegion] = useState("")
   const [query, setQuery] = useState(() => {
+    const activityName = activity?.name?.toLowerCase() || ""
+    
+    // Map specific activity names to relevant search queries
+    const activityQueryMap: Record<string, string> = {
+      // Outdoor activities
+      "morning hike": "hiking trail OR nature trail OR mountain trail",
+      "picnic in the park": "park OR picnic area OR public garden",
+      "beach day": "beach OR seaside OR waterfront",
+      "cycling adventure": "bike trail OR cycling route OR bike path",
+      "outdoor photography": "scenic viewpoint OR park OR nature reserve",
+      
+      // Food & dining
+      "brunch with friends": "brunch restaurant OR cafe OR breakfast place",
+      "cooking class": "cooking school OR culinary class OR cooking studio",
+      "food market tour": "food market OR farmers market OR local market",
+      "wine tasting": "winery OR wine bar OR wine tasting room",
+      
+      // Entertainment
+      "movie marathon": "cinema OR movie theater OR film screening",
+      "live music concert": "music venue OR concert hall OR live music bar",
+      "board game night": "board game cafe OR game lounge OR gaming center",
+      "art gallery visit": "art gallery OR museum OR exhibition space",
+      
+      // Relaxation
+      "spa day": "spa OR wellness center OR massage therapy",
+      "reading session": "library OR quiet cafe OR bookstore",
+      "meditation & yoga": "yoga studio OR meditation center OR wellness retreat",
+      "coffee shop visit": "coffee shop OR cafe OR coffee house",
+      
+      // Fitness
+      "gym workout": "gym OR fitness center OR workout studio",
+      "rock climbing": "climbing gym OR rock climbing center OR bouldering gym",
+      "swimming": "swimming pool OR aquatic center OR water sports",
+      
+      // Social
+      "visit family": "family restaurant OR home OR community center",
+      "game night with friends": "game cafe OR board game lounge OR gaming center",
+      "double date": "romantic restaurant OR date spot OR couple activities",
+      "weekend trip": "hotel OR accommodation OR tourist attraction"
+    }
+    
+    // Check for exact match first
+    if (activityQueryMap[activityName]) {
+      return activityQueryMap[activityName]
+    }
+    
+    // Fallback to category-based queries for activities not in the map
     const cat = activity?.category
     switch (cat) {
       case "food":
