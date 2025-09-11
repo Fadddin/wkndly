@@ -82,13 +82,13 @@ export function PersonalizationDialog({ children }: PersonalizationDialogProps) 
                     variant={selectedTheme === themeId ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleThemeChange(themeId as keyof typeof themes)}
-                    className="justify-start h-auto p-3"
+                    className="justify-start h-auto w-full p-3"
                   >
-                    <div className="flex items-center gap-2">
-                      <IconComponent className="w-4 h-4" />
-                      <div className="text-left">
+                    <div className="flex gap-2">
+                      <IconComponent className="w-4 h-4 my-1" />
+                      <div className="text-left  flex-1 min-w-0">
                         <div className="text-sm font-medium">{theme.name}</div>
-                        <div className="text-xs opacity-70">{theme.description}</div>
+                        <div className="text-xs opacity-70 break-words overflow-hidden text-ellipsis whitespace-normal">{theme.description}</div>
                       </div>
                     </div>
                   </Button>
@@ -107,13 +107,7 @@ export function PersonalizationDialog({ children }: PersonalizationDialogProps) 
               <Switch checked={isLongWeekend} onCheckedChange={handleLongWeekendToggle} />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Auto-save</Label>
-                <p className="text-sm text-muted-foreground">Automatically save your progress</p>
-              </div>
-              <Switch checked={autoSave} onCheckedChange={handleAutoSaveToggle} />
-            </div>
+            
           </div>
         </div>
       </DialogContent>

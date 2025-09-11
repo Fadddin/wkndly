@@ -66,10 +66,7 @@ export function ActivityBrowser() {
               <currentTheme.icon className="w-4 h-4 mr-2" />
               Add {currentTheme.name.split(" ")[0]} Picks
             </Button>
-            <Button variant="outline" size="sm">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Custom
-            </Button>
+            
           </div>
         </div>
 

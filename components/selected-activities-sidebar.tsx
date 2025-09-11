@@ -81,7 +81,7 @@ export function SelectedActivitiesSidebar() {
               variant="ghost"
               size="sm"
               onClick={clearAll}
-              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 border border-red-500 border-dashed"
             >
               Clear All
             </Button>

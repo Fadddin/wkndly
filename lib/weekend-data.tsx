@@ -374,13 +374,23 @@ export function getWeekendDays(isLongWeekend: boolean) {
 export function getUpcomingHolidays() {
   const holidays = [
     { name: "New Year's Day", date: "2025-01-01" },
-    { name: "Valentine's Day", date: "2025-02-14" },
-    { name: "Easter", date: "2025-04-20" },
-    { name: "Memorial Day", date: "2025-05-26" },
-    { name: "Independence Day", date: "2025-07-04" },
-    { name: "Labor Day", date: "2025-09-01" },
-    { name: "Thanksgiving", date: "2025-11-27" },
-    { name: "Christmas", date: "2025-12-25" },
+    { name: "Republic Day", date: "2025-01-26" },
+    { name: "Mahashivaratri", date: "2025-02-26" },
+    { name: "Holi", date: "2025-03-14" },
+    { name: "Id-ul-Fitr (Eid-al-Fitr)", date: "2025-03-31" },
+    { name: "Mahavir Jayanti", date: "2025-04-10" },
+    { name: "Good Friday", date: "2025-04-18" },
+    { name: "Buddha Purnima", date: "2025-05-12" },
+    { name: "Bakrid (Id-ul-Zuha)", date: "2025-06-07" },
+    { name: "Muharram", date: "2025-07-06" },
+    { name: "Independence Day", date: "2025-08-15" },
+    { name: "Ganesh Chaturthi (Vinayaka Chaturthi)", date: "2025-08-27" },
+    { name: "Milad-un-Nabi", date: "2025-09-05" },
+    { name: "Gandhi Jayanti", date: "2025-10-02" },
+    { name: "Dussehra (Vijaya Dashami)", date: "2025-10-02" },
+    { name: "Diwali (Deepavali)", date: "2025-10-20" },
+    { name: "Guru Nanak Jayanti", date: "2025-11-05" },
+    { name: "Christmas Day", date: "2025-12-25" },
   ]
 
   const today = new Date()

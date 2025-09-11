@@ -52,7 +52,7 @@ function WeekendlyAppContent() {
               {/* Holiday Notice */}
               {upcomingHolidays.length > 0 && (
                 <div className="hidden md:block text-xs text-muted-foreground bg-muted/50 px-3 py-1 rounded-full">
-                  🎉 {upcomingHolidays[0].name} coming up!
+                  🎉 {upcomingHolidays[0].name} coming up on {upcomingHolidays[0].date}
                 </div>
               )}
 
