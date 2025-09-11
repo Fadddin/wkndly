@@ -175,7 +175,7 @@ export function ActivityBrowser() {
                       </div>
                     </div>
                     {isSelected && (
-                      <Badge variant="default" className="hidden sm:inline-flex">
+                      <Badge variant="default">
                         Selected
                       </Badge>
                     )}
