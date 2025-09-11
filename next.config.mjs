@@ -16,9 +16,10 @@ const nextConfig = {
 export default withPWA({
   dest: 'public',
   register: true,
-  skipWaiting: false,
+  skipWaiting: true,
   disable: !isProd,
-  cacheOnFrontEndNav: true,
+  buildExcludes: [/app-build-manifest\.json$/],
+  // cacheOnFrontEndNav: true,
   fallbacks: {
     document: '/offline.html',
   },
