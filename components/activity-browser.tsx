@@ -18,6 +18,35 @@ export function ActivityBrowser() {
 
   const currentTheme = themes[selectedTheme]
 
+  const getBackgroundImageForActivity = (activityName: string) => {
+    const name = activityName.toLowerCase()
+    if (name.includes("hike")) return "/Doodles/hikeDoodle.jpg"
+    if (name.includes("picnic")) return "/Doodles/picnicDoodle.jpg"
+    if (name.includes("beach")) return "/Doodles/beachDoodle.jpg"
+    if (name.includes("cycl")) return "/Doodles/cycleDoodle.jpg"
+    if (name.includes("photograph")) return "/Doodles/photographyDoodle.jpg"
+    if (name.includes("brunch")) return "/Doodles/foodMarketDoodle.jpg"
+    if (name.includes("cooking")) return "/Doodles/cookingDoodle.jpg"
+    if (name.includes("market")) return "/Doodles/foodMarketDoodle.jpg"
+    if (name.includes("wine")) return "/Doodles/wineTastingDoodle.jpg"
+    if (name.includes("movie")) return "/Doodles/movieDoodle.webp"
+    if (name.includes("concert")) return "/Doodles/concertDoodle.jpg"
+    if (name.includes("board game")) return "/Doodles/boardGameDoodle.jpg"
+    if (name.includes("game night")) return "/Doodles/gameNightDoodle.png"
+    if (name.includes("art gallery")) return "/Doodles/artGalleryDoodle.jpg"
+    if (name.includes("spa")) return "/Doodles/spaDoodle.png"
+    if (name.includes("reading")) return "/Doodles/readingDoodle.jpg"
+    if (name.includes("yoga") || name.includes("meditation")) return "/Doodles/meditationAndYogaDoodle.jpg"
+    if (name.includes("coffee")) return "/Doodles/coffeeShopDoodle.jpg"
+    if (name.includes("gym")) return "/Doodles/gymDoodle.jpg"
+    if (name.includes("climbing")) return "/Doodles/rockClimbingDoodle.jpg"
+    if (name.includes("swim")) return "/Doodles/swimmingDoodle.jpg"
+    if (name.includes("family")) return "/Doodles/familyDoodle.jpg"
+    if (name.includes("double date")) return "/Doodles/doubleDateDoodle.jpg"
+    if (name.includes("weekend trip") || name.includes("trip")) return "/Doodles/weekendTripDoodle.jpg"
+    return undefined
+  }
+
   const categoryAccent: Record<string, string> = {
     outdoor: "border-l-2 border-emerald-300/50 hover:border-emerald-400/60",
     food: "border-l-2 border-orange-300/50 hover:border-orange-400/60",
@@ -174,11 +203,19 @@ export function ActivityBrowser() {
             return (
               <Card
                 key={activity.id}
-                className={`relative cursor-pointer transition-all hover:shadow-md hover:scale-[1.02] border bg-card ${
+                className={`relative cursor-pointer transition-all hover:shadow-md hover:scale-[1.02] border bg-card overflow-hidden ${
                   isSelected ? "ring-2 ring-primary" : ""
                 } ${categoryAccent[activity.category] ?? ""} ${isRecommended ? "ring-1 ring-primary/30" : ""}`}
                 onClick={() => toggleActivity(activity)}
               >
+                {getBackgroundImageForActivity(activity.name) && (
+                  <div className="absolute inset-0 pointer-events-none select-none">
+                    <div
+                      className="h-full w-full bg-center bg-cover opacity-10"
+                      style={{ backgroundImage: `url(${getBackgroundImageForActivity(activity.name)})` }}
+                    />
+                  </div>
+                )}
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
