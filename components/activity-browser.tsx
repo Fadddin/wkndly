@@ -1,12 +1,12 @@
 "use client"
 
-import { useMemo, useRef } from "react"
+import { useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search, Plus } from "lucide-react"
 import { PlaceSearchDialog } from "@/components/place-search-dialog"
 import { useWeekend } from "@/lib/weekend-context"
 import { activities, categories, themes } from "@/lib/weekend-data"
@@ -20,34 +20,26 @@ export function ActivityBrowser() {
 
   const getThemeGradient = () => {
     const name = currentTheme.name.toLowerCase()
-    if (name.includes("adventur")) return "bg-gradient-to-r from-orange-100 via-rose-100 to-orange-50"
-    if (name.includes("family")) return "bg-gradient-to-r from-amber-50 via-rose-50 to-pink-50"
-    if (name.includes("lazy")) return "bg-gradient-to-r from-stone-50 via-emerald-50/20 to-zinc-50"
-    return "bg-gradient-to-r from-sky-50 via-teal-50 to-emerald-50" // Balanced default
+    if (name.includes("adventur")) return "bg-gradient-to-r from-orange-100 via-rose-100 to-orange-50 dark:from-orange-900/20 dark:via-rose-900/20 dark:to-orange-900/10"
+    if (name.includes("family")) return "bg-gradient-to-r from-amber-50 via-rose-50 to-pink-50 dark:from-amber-900/20 dark:via-rose-900/20 dark:to-pink-900/10"
+    if (name.includes("lazy")) return "bg-gradient-to-r from-stone-50 via-emerald-50/20 to-zinc-50 dark:from-stone-900/20 dark:via-emerald-900/10 dark:to-zinc-900/10"
+    return "bg-gradient-to-r from-sky-50 via-teal-50 to-emerald-50 dark:from-sky-900/20 dark:via-teal-900/20 dark:to-emerald-900/10" // Balanced default
   }
 
   const getChipClasses = (isSelected: boolean) => {
     const base = "cursor-pointer gap-1 whitespace-nowrap transition-transform active:scale-95 hover:scale-105"
     const name = currentTheme.name.toLowerCase()
     if (name.includes("adventur")) {
-      return `${base} bg-orange-50 text-orange-800 hover:bg-orange-100 ${isSelected ? "ring-1 ring-orange-300" : ""}`
+      return `${base} bg-orange-50 text-orange-800 hover:bg-orange-100 dark:bg-orange-900/20 dark:text-orange-200 dark:hover:bg-orange-900/30 ${isSelected ? "ring-1 ring-orange-300 dark:ring-orange-600" : ""}`
     }
     if (name.includes("family")) {
-      return `${base} bg-purple-50 text-purple-800 hover:bg-purple-100 ${isSelected ? "ring-1 ring-purple-300" : ""}`
+      return `${base} bg-purple-50 text-purple-800 hover:bg-purple-100 dark:bg-purple-900/20 dark:text-purple-200 dark:hover:bg-purple-900/30 ${isSelected ? "ring-1 ring-purple-300 dark:ring-purple-600" : ""}`
     }
     if (name.includes("lazy")) {
-      return `${base} bg-stone-100 text-stone-800 hover:bg-stone-200 ${isSelected ? "ring-1 ring-stone-300" : ""}`
+      return `${base} bg-stone-100 text-stone-800 hover:bg-stone-200 dark:bg-stone-900/30 dark:text-stone-200 dark:hover:bg-stone-900/40 ${isSelected ? "ring-1 ring-stone-300 dark:ring-stone-600" : ""}`
     }
     // Balanced
-    return `${base} bg-teal-50 text-teal-800 hover:bg-teal-100 ${isSelected ? "ring-1 ring-teal-300" : ""}`
-  }
-
-  const recommendedRowRef = useRef<HTMLDivElement | null>(null)
-  const scrollRecommendedRow = (direction: "left" | "right") => {
-    const node = recommendedRowRef.current
-    if (!node) return
-    const amount = Math.min(400, node.clientWidth * 0.9)
-    node.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" })
+    return `${base} bg-teal-50 text-teal-800 hover:bg-teal-100 dark:bg-teal-900/20 dark:text-teal-200 dark:hover:bg-teal-900/30 ${isSelected ? "ring-1 ring-teal-300 dark:ring-teal-600" : ""}`
   }
 
   const getBackgroundImageForActivity = (activityName: string) => {
@@ -176,17 +168,7 @@ export function ActivityBrowser() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="relative">
-                <button
-                  aria-label="Scroll left"
-                  className="hidden 2xl:flex items-center justify-center absolute left-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-background/70 border backdrop-blur hover:bg-background transition-colors"
-                  onClick={() => scrollRecommendedRow("left")}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <div
-                  ref={recommendedRowRef}
-                  className="flex gap-2 overflow-x-auto no-scrollbar py-1 scroll-smooth snap-x snap-mandatory"
-                >
+                <div className="flex gap-2 overflow-x-auto no-scrollbar py-1 scroll-smooth snap-x snap-mandatory">
                   {getRecommendedActivities.slice(0, 12).map((activity) => {
                     const IconComponent = activity.icon
                     const isSelected = selectedActivities.find((a) => a.id === activity.id)
@@ -194,7 +176,7 @@ export function ActivityBrowser() {
                       <Badge
                         key={activity.id}
                         variant={"secondary"}
-                        className={`${getChipClasses(!!isSelected)} snap-start px-2 py-1 rounded-md shadow-sm border border-gray-400`}
+                        className={`${getChipClasses(!!isSelected)} snap-start px-2 py-1 rounded-md shadow-sm border border-gray-300 dark:border-gray-700`}
                         onClick={() => toggleActivity(activity)}
                       >
                         <IconComponent className="w-3 h-3" />
@@ -203,13 +185,6 @@ export function ActivityBrowser() {
                     )
                   })}
                 </div>
-                <button
-                  aria-label="Scroll right"
-                  className="hidden 2xl:flex items-center justify-center absolute right-2 top-1/2 -translate-y-1/2 z-10 h-8 w-8 rounded-full bg-background/70 border backdrop-blur hover:bg-background transition-colors"
-                  onClick={() => scrollRecommendedRow("right")}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
               </CardContent>
             </Card>
           </>
@@ -231,7 +206,7 @@ export function ActivityBrowser() {
           value={selectedCategory}
           onValueChange={(value) => dispatch({ type: "SET_SELECTED_CATEGORY", payload: value })}
         >
-          <TabsList className="pl-4 flex w-full max-w-full overflow-x-auto no-scrollbar gap-1 lg:grid lg:grid-cols-7 lg:gap-0">
+          <TabsList className="pl-24 lg:pl-2 flex w-full max-w-full overflow-x-auto no-scrollbar gap-1 lg:grid lg:grid-cols-7 lg:gap-0">
             {categories.map((category) => (
               <TabsTrigger key={category.id} value={category.id} className="text-xs whitespace-nowrap flex-shrink-0">
                 {category.name}
@@ -254,7 +229,7 @@ export function ActivityBrowser() {
                 key={activity.id}
                 className={`relative cursor-pointer transition-all hover:shadow-md hover:scale-[1.02] border bg-card overflow-hidden ${
                   isSelected ? "ring-2 ring-primary" : ""
-                } ${categoryAccent[activity.category] ?? ""} ${isRecommended ? "ring-1 ring-primary/30" : ""}`}
+                } ${categoryAccent[activity.category] ?? ""} ${!isSelected && isRecommended ? "ring-1 ring-primary/30" : ""}`}
                 onClick={() => toggleActivity(activity)}
               >
                 {getBackgroundImageForActivity(activity.name) && (
