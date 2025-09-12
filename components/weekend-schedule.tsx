@@ -188,7 +188,7 @@ export function WeekendSchedule() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setSelectedActivityForPlacement(null)}
-                  className="ml-2 h-5 px-2 text-xs"
+                  className="ml-2 h-5 px-2 text-xs border border-red-500 border-dashed"
                 >
                   Cancel
                 </Button>
@@ -205,7 +205,7 @@ export function WeekendSchedule() {
                 return (
                   <div
                     key={activity.id}
-                    className={`flex flex-col items-center gap-2 p-3 border rounded-xl cursor-pointer transition-all hover:shadow-sm hover:scale-[1.02] min-w-[120px] ${
+                    className={`flex flex-col items-center gap-2 p-3 border rounded-xl cursor-pointer transition-all hover:shadow-sm hover:scale-[1.02] w-[120px] ${
                       isSelected 
                         ? "bg-primary/20 border-primary ring-2 ring-primary/30" 
                         : isScheduled 
@@ -219,9 +219,10 @@ export function WeekendSchedule() {
                         <IconComponent className="w-4 h-4" />
                       </div>
                     </div>
-                    <div className="text-center">
-                      <p className="text-xs font-medium truncate max-w-[100px]">{activity.name}</p>
+                    <div className="text-center w-full overflow-hidden">
+                      <p className="text-xs font-medium truncate">{activity.name}</p>
                       <p className="text-xs text-muted-foreground">{activity.duration}</p>
+                      {/* <p className="text-xs text-muted-foreground break-all leading-tight overflow-hidden">{activity.location}</p> */}
                       {isScheduled && (
                         <Badge variant="secondary" className="text-xs mt-1">
                           {weekendDays.find((d) => d.key === isScheduled.day)?.name.slice(0, 3)} {isScheduled.timeSlot.slice(0, 5)}
@@ -260,13 +261,14 @@ export function WeekendSchedule() {
                   onDragStart={(e) => handleDragStart(e, activity)}
                   onDragEnd={handleDragEnd}
                 >
-                  <GripVertical className="w-3 h-3 text-muted-foreground" />
-                  <div className={`p-1.5 rounded ${activity.color}`}>
+                  <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                  <div className={`p-1.5 rounded ${activity.color} flex-shrink-0`}>
                     <IconComponent className="w-3 h-3" />
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 overflow-hidden">
                     <p className="text-sm font-medium truncate">{activity.name}</p>
                     <p className="text-xs text-muted-foreground">{activity.duration}</p>
+                    <p className="text-xs text-muted-foreground break-all leading-tight overflow-hidden">{activity.location}</p>
                   </div>
                   {isScheduled && (
                     <Badge variant="secondary" className="text-xs">
@@ -325,7 +327,7 @@ export function WeekendSchedule() {
             }`}
           >
             {weekendDays.map((day) => (
-              <Card key={day.id} className="h-fit">
+              <Card key={day.id} className="h-fit w-full min-w-0">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-lg">
                     <Calendar className="w-4 h-4" />
@@ -335,7 +337,7 @@ export function WeekendSchedule() {
                     {scheduledActivities.filter((sa) => sa.day === day.key).length} activities scheduled
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 min-w-0">
                   {timeSlots.map((timeSlot) => {
                     const scheduledActivity = getScheduledActivity(day.key, timeSlot)
                     const isDragOver = !isMobile && dragOverSlot?.day === day.key && dragOverSlot?.timeSlot === timeSlot
@@ -356,8 +358,8 @@ export function WeekendSchedule() {
                         onDrop={(e) => handleDrop(e, day.key, timeSlot)}
                         onClick={() => handleSlotClick(day.key, timeSlot)}
                       >
-                        <div className="w-12 md:w-16 text-xs font-medium text-muted-foreground">{timeSlot}</div>
-                        <div className="flex-1">
+                        <div className="w-12 md:w-16 text-xs font-medium text-muted-foreground flex-shrink-0">{timeSlot}</div>
+                        <div className="flex-1 min-w-0 overflow-hidden">
                           {scheduledActivity ? (
                             <div
                               className={`flex items-center gap-2 md:gap-3 p-1 rounded border bg-card ${
@@ -367,17 +369,18 @@ export function WeekendSchedule() {
                               onDragStart={(e) => handleDragStart(e, scheduledActivity.activity)}
                               onDragEnd={handleDragEnd}
                             >
-                              {!isMobile && <GripVertical className="w-3 h-3 text-muted-foreground" />}
-                              <div className={`p-1.5 rounded ${scheduledActivity.activity.color}`}>
+                              {!isMobile && <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />}
+                              <div className={`p-1.5 rounded ${scheduledActivity.activity.color} flex-shrink-0`}>
                                 <scheduledActivity.activity.icon className="w-3 h-3" />
                               </div>
-                              <div className="flex-1 min-w-0">
+                              <div className="flex-1 min-w-0 overflow-hidden">
                                 <p className="text-xs md:text-sm font-medium truncate">{scheduledActivity.activity.name}</p>
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <div className="text-xs text-muted-foreground">
                                   <span>{scheduledActivity.activity.duration}</span>
+                                  <div className="break-all leading-tight overflow-hidden">• {scheduledActivity.activity.location}</div>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-1 md:gap-2">
+                              <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
                                 <select
                                   className="text-xs border rounded px-1 py-0.5 bg-background hidden md:block"
                                   value={activityVibes[scheduledActivity.activity.id] || ""}

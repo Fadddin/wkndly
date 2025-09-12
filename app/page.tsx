@@ -138,14 +138,14 @@ function WeekendlyAppContent() {
       <div className="flex-1 flex overflow-hidden min-h-0">
         {currentView === "browse" ? (
           <>
-            {/* Activity Browser - Full height with scroll */}
-            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 mb-6">
-              <div className="flex-1 lg:flex-[3] overflow-hidden min-h-0">
+            {/* Activity Browser - Fixed height with scroll */}
+            <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
+              <div className="flex-1 lg:flex-[3] h-screen overflow-hidden">
                 <ActivityBrowser />
               </div>
 
               {/* Selected Activities Sidebar - Fixed position on larger screens */}
-              <div className="hidden lg:block lg:flex-[1] bg-card/50 backdrop-blur-sm pb-4 min-h-0 mb-2">
+              <div className="hidden lg:block lg:flex-[1] bg-card/50 backdrop-blur-sm h-screen overflow-y-auto">
                 <SelectedActivitiesSidebar />
               </div>
             </div>
