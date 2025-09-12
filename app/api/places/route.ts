@@ -5,12 +5,55 @@ export async function GET(req: Request) {
 
   const query = searchParams.get("query") || "" // e.g., "brunch with friends"
   const region = searchParams.get("region") || "" // optional, e.g., city
+  const placeId = searchParams.get("placeId") || ""
 
   if (!process.env.GOOGLE_MAPS_API_KEY) {
     return NextResponse.json({ error: "Missing Google Maps API key" }, { status: 500 })
   }
 
   try {
+    // If a specific placeId is provided, return detailed info about that place
+    if (placeId) {
+      const fields = [
+        "name",
+        "formatted_address",
+        "geometry/location",
+        "rating",
+        "opening_hours/weekday_text",
+        "opening_hours/open_now",
+        "photos"
+      ].join(",")
+
+      const detailsRes = await fetch(
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(
+          placeId
+        )}&fields=${fields}&key=${process.env.GOOGLE_MAPS_API_KEY}`
+      )
+      const detailsData = await detailsRes.json()
+
+      if (detailsData.status !== "OK") {
+        return NextResponse.json(
+          { error: "Failed to fetch place details", status: detailsData.status },
+          { status: 500 }
+        )
+      }
+
+      const p = detailsData.result
+      const firstPhotoRef = p.photos?.[0]?.photo_reference || null
+      return NextResponse.json({
+        result: {
+          id: placeId,
+          name: p.name,
+          address: p.formatted_address,
+          location: p.geometry?.location,
+          rating: p.rating ?? null,
+          openingHours: p.opening_hours?.weekday_text ?? null,
+          openNow: typeof p.opening_hours?.open_now === "boolean" ? p.opening_hours.open_now : null,
+          photoReference: firstPhotoRef,
+        },
+      })
+    }
+
     let locationParam = ""
 
     if (region) {

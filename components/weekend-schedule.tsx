@@ -289,15 +289,6 @@ export function WeekendSchedule() {
         <div className="p-4 md:p-6 border-b border-border bg-card">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              {/* <Button
-                variant="outline"
-                size="sm"
-                onClick={goBackToBrowse}
-                className="flex items-center gap-2 bg-transparent"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back
-              </Button> */}
               <div>
                 <h2 className="text-xl md:text-2xl font-bold text-foreground">Weekend Schedule</h2>
                 <p className="text-sm text-muted-foreground">

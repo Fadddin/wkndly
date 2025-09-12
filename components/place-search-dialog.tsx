@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -13,6 +13,17 @@ type PlaceResult = {
   name: string
   address: string
   location?: { lat: number; lng: number }
+}
+
+type PlaceDetails = {
+  id: string
+  name: string
+  address: string
+  location?: { lat: number; lng: number }
+  rating?: number | null
+  openingHours?: string[] | null
+  openNow?: boolean | null
+  photoReference?: string | null
 }
 
 export function PlaceSearchDialog({
@@ -96,6 +107,8 @@ export function PlaceSearchDialog({
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<PlaceResult[]>([])
   const [selectedPlace, setSelectedPlace] = useState<PlaceResult | null>(null)
+  const [details, setDetails] = useState<PlaceDetails | null>(null)
+  const [detailsLoading, setDetailsLoading] = useState(false)
 
   async function searchPlaces() {
     if (!query.trim()) return
@@ -120,6 +133,34 @@ export function PlaceSearchDialog({
     }
   }
 
+  // Fetch details when a place is selected
+  useEffect(() => {
+    let aborted = false
+    async function loadDetails() {
+      if (!selectedPlace) {
+        setDetails(null)
+        return
+      }
+      setDetailsLoading(true)
+      try {
+        const url = new URL("/api/places", window.location.origin)
+        url.searchParams.set("placeId", selectedPlace.id)
+        const resp = await fetch(url.toString())
+        if (!resp.ok) return
+        const data = await resp.json()
+        if (!aborted) setDetails(data.result as PlaceDetails)
+      } catch (_) {
+        if (!aborted) setDetails(null)
+      } finally {
+        if (!aborted) setDetailsLoading(false)
+      }
+    }
+    loadDetails()
+    return () => {
+      aborted = true
+    }
+  }, [selectedPlace])
+
   function addSelectedToActivities() {
     if (!selectedPlace) return
     const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${selectedPlace.id}`
@@ -141,13 +182,13 @@ export function PlaceSearchDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {/* ✅ No need for stopPropagation hacks */}
+       
         <div role="button" tabIndex={0}>
           {children}
         </div>
       </DialogTrigger>
 
-      {/* ✅ Prevent bubbling clicks from leaking out */}
+      {/* Prevent bubbling clicks from leaking out */}
       <DialogContent className="sm:max-w-2xl" onClick={(e) => e.stopPropagation()}>
         <DialogHeader>
           <DialogTitle>Find a place for {activity?.name}</DialogTitle>
@@ -185,13 +226,25 @@ export function PlaceSearchDialog({
                     <div className="font-medium text-sm">{r.name}</div>
                     <div className="text-xs text-muted-foreground">{r.address}</div>
                   </div>
-                  <Button
-                    size="sm"
-                    variant={selectedPlace?.id === r.id ? "default" : "secondary"}
-                    onClick={() => setSelectedPlace(r)}
-                  >
-                    {selectedPlace?.id === r.id ? "Selected" : "Select"}
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${r.id}`
+                        window.open(mapsUrl, "_blank")
+                      }}
+                    >
+                      Open in Maps
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={selectedPlace?.id === r.id ? "default" : "secondary"}
+                      onClick={() => setSelectedPlace(r)}
+                    >
+                      {selectedPlace?.id === r.id ? "Selected" : "Select"}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -201,6 +254,51 @@ export function PlaceSearchDialog({
               </div>
             )}
           </div>
+
+          {/* Selected details */}
+          {selectedPlace && (
+            <div className="border rounded-md p-3 space-y-2">
+              <div className="flex items-start gap-3">
+                {details?.photoReference ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={`/api/places/photo?photoReference=${encodeURIComponent(details.photoReference)}&maxWidth=300`}
+                    alt={selectedPlace.name}
+                    className="w-24 h-24 object-cover rounded"
+                  />
+                ) : (
+                  <div className="w-24 h-24 bg-muted rounded grid place-items-center text-xs text-muted-foreground">
+                    No photo
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium">{selectedPlace.name}</div>
+                  <div className="text-xs text-muted-foreground">{selectedPlace.address}</div>
+                  <div className="mt-1 text-xs flex items-center gap-2">
+                    {detailsLoading ? (
+                      <span>Loading details…</span>
+                    ) : (
+                      <>
+                        {typeof details?.rating === "number" && (
+                          <span>Rating: {details.rating.toFixed(1)}★</span>
+                        )}
+                        {typeof details?.openNow === "boolean" && (
+                          <Badge variant={details.openNow ? "default" : "secondary"}>
+                            {details.openNow ? "Open now" : "Closed now"}
+                          </Badge>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+              {details?.openingHours && (
+                <div className="text-xs text-muted-foreground whitespace-pre-line">
+                  {details.openingHours.join("\n")}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-2">
