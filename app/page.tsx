@@ -8,7 +8,7 @@ import { ActivityBrowser } from "@/components/activity-browser"
 import { SelectedActivitiesSidebar } from "@/components/selected-activities-sidebar"
 import { WeekendSchedule } from "@/components/weekend-schedule"
 import { PersonalizationDialog } from "@/components/personalization-dialog"
-import { ExportShareDialog } from "@/components/export-share-dialog"
+import { EnhancedShareDialog } from "@/components/enhanced-share-dialog"
 import { SavedPlansDialog } from "@/components/saved-plans-dialog"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -65,12 +65,12 @@ function WeekendlyAppContent() {
                   </Button>
                 </SavedPlansDialog>
 
-                <ExportShareDialog>
+                <EnhancedShareDialog>
                   <Button variant="outline" size="sm">
                     <Share2 className="w-4 h-4 mr-2" />
                     <span>Share</span>
                   </Button>
-                </ExportShareDialog>
+                </EnhancedShareDialog>
 
                 <PersonalizationDialog>
                   <Button variant="outline" size="sm">
@@ -112,12 +112,12 @@ function WeekendlyAppContent() {
                         Saved Plans
                       </Button>
                     </SavedPlansDialog>
-                    <ExportShareDialog>
+                    <EnhancedShareDialog>
                       <Button variant="outline" className="w-full justify-start">
                         <Share2 className="w-4 h-4 mr-2" />
                         Share
                       </Button>
-                    </ExportShareDialog>
+                    </EnhancedShareDialog>
                     <PersonalizationDialog>
                       <Button variant="outline" className="w-full justify-start">
                         <Settings className="w-4 h-4 mr-2" />

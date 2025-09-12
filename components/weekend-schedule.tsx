@@ -11,6 +11,7 @@ import type { ActivityVibe } from "@/lib/weekend-context"
 import { getTimeSlots, getWeekendDays } from "@/lib/weekend-data"
 import type { WeekendDay } from "@/lib/weekend-context"
 import { SavedPlansDialog } from "@/components/saved-plans-dialog"
+import { EnhancedShareDialog } from "@/components/enhanced-share-dialog"
 
 export function WeekendSchedule() {
   const { state, dispatch } = useWeekend()
@@ -310,6 +311,11 @@ export function WeekendSchedule() {
                   Save Plan
                 </Button>
               </SavedPlansDialog>
+              <EnhancedShareDialog>
+                <Button variant="outline" size="sm">
+                  Share
+                </Button>
+              </EnhancedShareDialog>
               <Button variant="outline" onClick={clearSchedule} size="sm">
                 Clear Schedule
               </Button>
