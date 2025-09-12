@@ -42,7 +42,7 @@ function WeekendlyAppContent() {
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                   Weekendly
                 </h1>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs lg:text-sm text-muted-foreground">
                   {userName ? `Welcome back, ${userName}!` : "Plan your perfect weekend"}
                 </p>
               </div>
