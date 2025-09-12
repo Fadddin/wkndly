@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import React, { useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -11,6 +11,7 @@ import { PlaceSearchDialog } from "@/components/place-search-dialog"
 import { useWeekend } from "@/lib/weekend-context"
 import { activities, categories, themes } from "@/lib/weekend-data"
 import { toast } from "@/hooks/use-toast"
+import { VirtuosoGrid } from "react-virtuoso"
 
 export function ActivityBrowser() {
   const { state, dispatch } = useWeekend()
@@ -218,8 +219,29 @@ export function ActivityBrowser() {
 
       {/* Activity grid */}
       <div className="flex-1 p-3 sm:p-4 lg:p-6 min-h-0">
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4">
-          {filteredActivities.map((activity) => {
+      
+        <VirtuosoGrid
+          data={filteredActivities}
+          totalCount={filteredActivities.length}
+          overscan={5}
+          components={{
+            List: React.forwardRef<HTMLDivElement, { style?: React.CSSProperties; children?: React.ReactNode }>(({ style, children }, ref) => (
+              <div
+                ref={ref}
+                style={style}
+                className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4"
+              >
+                {children}
+              </div>
+            )),
+            Item: React.forwardRef<HTMLDivElement, { children?: React.ReactNode }>(({ children, ...props }, ref) => (
+              <div ref={ref} {...props}>
+                {children}
+              </div>
+            )),
+          }}
+          itemContent={(index, activity) => {
+  
             const IconComponent = activity.icon
             const isSelected = selectedActivities.find((a) => a.id === activity.id)
             const isRecommended = currentTheme.suggestedMoods.includes(activity.mood)
@@ -309,8 +331,8 @@ export function ActivityBrowser() {
                 </CardContent>
               </Card>
             )
-          })}
-        </div>
+          }}
+        />
       </div>
     </div>
   )

@@ -155,6 +155,9 @@ importers:
       react-virtualized-auto-sizer:
         specifier: ^1.0.26
         version: 1.0.26(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-virtuoso:
+        specifier: ^4.14.0
+        version: 4.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-window:
         specifier: ^2.1.0
         version: 2.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4019,6 +4022,12 @@ packages:
     peerDependencies:
       react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  react-virtuoso@4.14.0:
+    resolution: {integrity: sha512-fR+eiCvirSNIRvvCD7ueJPRsacGQvUbjkwgWzBZXVq+yWypoH7mRUvWJzGHIdoRaCZCT+6mMMMwIG2S1BW3uwA==}
+    peerDependencies:
+      react: '>=16 || >=17 || >= 18 || >= 19'
+      react-dom: '>=16 || >=17 || >= 18 || >=19'
 
   react-window@2.1.0:
     resolution: {integrity: sha512-STMrsd6t3pN/XFa5cblpwTLpsEDtrtdeNY+71QsEaY0m7Fhbn9R4XXYzYAyKDpeYbjmBpAflqHBdDDKW928m3Q==}
@@ -9058,6 +9067,11 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
 
   react-virtualized-auto-sizer@1.0.26(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  react-virtuoso@4.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)

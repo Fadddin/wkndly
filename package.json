@@ -60,6 +60,7 @@
     "react-hook-form": "^7.60.0",
     "react-resizable-panels": "^2.1.7",
     "react-virtualized-auto-sizer": "^1.0.26",
+    "react-virtuoso": "^4.14.0",
     "react-window": "^2.1.0",
     "recharts": "2.15.4",
     "sonner": "^1.7.4",
