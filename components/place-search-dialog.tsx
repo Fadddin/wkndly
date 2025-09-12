@@ -189,14 +189,14 @@ export function PlaceSearchDialog({
       </DialogTrigger>
 
       {/* Prevent bubbling clicks from leaking out */}
-      <DialogContent className="sm:max-w-2xl" onClick={(e) => e.stopPropagation()}>
-        <DialogHeader>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle>Find a place for {activity?.name}</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3">
+        <div className="flex-1 flex flex-col min-h-0 space-y-3">
           {/* Search controls */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div className="flex-shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-2">
             <Input
               placeholder="City (e.g., Bangalore)"
               value={region}
@@ -214,94 +214,101 @@ export function PlaceSearchDialog({
             </div>
           </div>
 
-          {/* Results */}
-          <div className="grid gap-2 max-h-64 overflow-auto">
-            {results.map((r) => (
-              <Card
-                key={r.id}
-                className={`${selectedPlace?.id === r.id ? "ring-2 ring-primary" : ""}`}
-              >
-                <CardContent className="p-3 flex items-center justify-between gap-2">
-                  <div>
-                    <div className="font-medium text-sm">{r.name}</div>
-                    <div className="text-xs text-muted-foreground">{r.address}</div>
+          {/* Scrollable content area */}
+          <div className="flex-1 min-h-0 space-y-3 overflow-y-auto">
+            {/* Results */}
+            <div className="space-y-1">
+              {results.map((r) => (
+                <Card
+                  key={r.id}
+                  className={`${selectedPlace?.id === r.id ? "ring-2 ring-primary" : ""}`}
+                >
+                  <CardContent className="p-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-xs truncate">{r.name}</div>
+                        <div className="text-xs text-muted-foreground truncate">{r.address}</div>
+                      </div>
+                      <div className="flex flex-col gap-1 flex-shrink-0">
+                        <Button
+                          size="sm"
+                          variant={selectedPlace?.id === r.id ? "default" : "secondary"}
+                          className="h-6 px-2 text-xs"
+                          onClick={() => setSelectedPlace(r)}
+                        >
+                          {selectedPlace?.id === r.id ? "✓" : "Select"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6 px-1 text-xs"
+                          onClick={() => {
+                            const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${r.id}`
+                            window.open(mapsUrl, "_blank")
+                          }}
+                        >
+                          📍 Maps
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              {results.length === 0 && !loading && (
+                <div className="text-xs text-muted-foreground">
+                  No results yet. Try searching above.
+                </div>
+              )}
+            </div>
+
+            {/* Selected details */}
+            {selectedPlace && (
+              <div className="border rounded-md p-2 space-y-1">
+                <div className="flex items-start gap-2">
+                  {details?.photoReference ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={`/api/places/photo?photoReference=${encodeURIComponent(details.photoReference)}&maxWidth=150`}
+                      alt={selectedPlace.name}
+                      className="w-12 h-12 object-cover rounded"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 bg-muted rounded grid place-items-center text-xs text-muted-foreground">
+                      📷
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-xs truncate">{selectedPlace.name}</div>
+                    <div className="text-xs text-muted-foreground truncate">{selectedPlace.address}</div>
+                    <div className="mt-1 text-xs flex items-center gap-1 flex-wrap">
+                      {detailsLoading ? (
+                        <span>Loading…</span>
+                      ) : (
+                        <>
+                          {typeof details?.rating === "number" && (
+                            <span>{details.rating.toFixed(1)}★</span>
+                          )}
+                          {typeof details?.openNow === "boolean" && (
+                            <Badge variant={details.openNow ? "default" : "secondary"} className="text-xs px-1 py-0 h-4">
+                              {details.openNow ? "Open" : "Closed"}
+                            </Badge>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => {
-                        const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${r.id}`
-                        window.open(mapsUrl, "_blank")
-                      }}
-                    >
-                      Open in Maps
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant={selectedPlace?.id === r.id ? "default" : "secondary"}
-                      onClick={() => setSelectedPlace(r)}
-                    >
-                      {selectedPlace?.id === r.id ? "Selected" : "Select"}
-                    </Button>
+                </div>
+                {details?.openingHours && (
+                  <div className="text-xs text-muted-foreground whitespace-pre-line max-h-16 overflow-y-auto">
+                    {details.openingHours.join("\n")}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-            {results.length === 0 && !loading && (
-              <div className="text-xs text-muted-foreground">
-                No results yet. Try searching above.
+                )}
               </div>
             )}
           </div>
 
-          {/* Selected details */}
-          {selectedPlace && (
-            <div className="border rounded-md p-3 space-y-2">
-              <div className="flex items-start gap-3">
-                {details?.photoReference ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={`/api/places/photo?photoReference=${encodeURIComponent(details.photoReference)}&maxWidth=300`}
-                    alt={selectedPlace.name}
-                    className="w-24 h-24 object-cover rounded"
-                  />
-                ) : (
-                  <div className="w-24 h-24 bg-muted rounded grid place-items-center text-xs text-muted-foreground">
-                    No photo
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium">{selectedPlace.name}</div>
-                  <div className="text-xs text-muted-foreground">{selectedPlace.address}</div>
-                  <div className="mt-1 text-xs flex items-center gap-2">
-                    {detailsLoading ? (
-                      <span>Loading details…</span>
-                    ) : (
-                      <>
-                        {typeof details?.rating === "number" && (
-                          <span>Rating: {details.rating.toFixed(1)}★</span>
-                        )}
-                        {typeof details?.openNow === "boolean" && (
-                          <Badge variant={details.openNow ? "default" : "secondary"}>
-                            {details.openNow ? "Open now" : "Closed now"}
-                          </Badge>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-              {details?.openingHours && (
-                <div className="text-xs text-muted-foreground whitespace-pre-line">
-                  {details.openingHours.join("\n")}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Actions */}
-          <div className="flex justify-end gap-2 pt-2">
+          {/* Actions - Fixed at bottom */}
+          <div className="flex-shrink-0 flex justify-end gap-2 pt-2 border-t">
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
