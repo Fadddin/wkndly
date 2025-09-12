@@ -32,7 +32,7 @@ function WeekendlyAppContent() {
                   variant="ghost"
                   size="sm"
                   onClick={() => dispatch({ type: "SET_CURRENT_VIEW", payload: "browse" })}
-                  className="lg:hidden px-2 py-1 h-7 text-xs border"
+                  className="px-2 py-1 h-7 text-xs border"
                 >
                   <ArrowLeft className="w-3 h-3 mr-1" />
                   Back
