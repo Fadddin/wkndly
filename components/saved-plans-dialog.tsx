@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CalendarPlus, Calendar, Trash2, Download } from "lucide-react"
+import { CalendarPlus, Calendar, Trash2, Download, ExternalLink } from "lucide-react"
 import { useWeekend } from "@/lib/weekend-context"
 import type { SavedPlan, ActivityVibe } from "@/lib/weekend-context"
 
@@ -39,6 +39,7 @@ export function SavedPlansDialog({ children }: SavedPlansDialogProps) {
       scheduledActivities,
       selectedActivities,
       theme: selectedTheme,
+      longWeekendOption: state.longWeekendOption,
       activityVibes: activityVibes,
     }
 
@@ -71,6 +72,171 @@ export function SavedPlansDialog({ children }: SavedPlansDialogProps) {
   }
 
   const canSavePlan = scheduledActivities.length > 0 || selectedActivities.length > 0
+
+  // Calendar export functions
+
+  const generateAppleCalendarUrl = (plan: SavedPlan) => {
+    const events = plan.scheduledActivities.map((scheduledActivity) => {
+      const { activity, day, timeSlot } = scheduledActivity
+      
+      // Convert day and time to a proper date (same logic as Google Calendar)
+      const today = new Date()
+      const dayOfWeek = today.getDay()
+      let targetDay = 0
+      
+      switch (day) {
+        case "friday":
+          targetDay = 5
+          break
+        case "saturday":
+          targetDay = 6
+          break
+        case "sunday":
+          targetDay = 0
+          break
+        case "monday":
+          targetDay = 1
+          break
+      }
+      
+      let daysUntilTarget = targetDay - dayOfWeek
+      if (daysUntilTarget <= 0) daysUntilTarget += 7
+      
+      const eventDate = new Date(today)
+      eventDate.setDate(today.getDate() + daysUntilTarget)
+      
+      const [time, period] = timeSlot.split(" ")
+      const [hours, minutes] = time.split(":")
+      let hour24 = parseInt(hours)
+      if (period === "PM" && hour24 !== 12) hour24 += 12
+      if (period === "AM" && hour24 === 12) hour24 = 0
+      
+      const startTime = new Date(eventDate)
+      startTime.setHours(hour24, parseInt(minutes), 0, 0)
+      
+      const endTime = new Date(startTime)
+      endTime.setHours(startTime.getHours() + 2)
+      
+      const formatDate = (date: Date) => {
+        return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z"
+      }
+      
+      return {
+        title: activity.name,
+        start: formatDate(startTime),
+        end: formatDate(endTime),
+        description: `Location: ${activity.location}\nDuration: ${activity.duration}\nCategory: ${activity.category}`
+      }
+    })
+    
+    // Generate .ics file content
+    const icsContent = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Weekendly//Weekend Plans//EN",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      ...events.flatMap(event => [
+        "BEGIN:VEVENT",
+        `UID:${Date.now()}-${Math.random().toString(36).substr(2, 9)}@weekendly.com`,
+        `DTSTART:${event.start}`,
+        `DTEND:${event.end}`,
+        `SUMMARY:${event.title}`,
+        `DESCRIPTION:${event.description}`,
+        "STATUS:CONFIRMED",
+        "SEQUENCE:0",
+        "END:VEVENT"
+      ]),
+      "END:VCALENDAR"
+    ].join("\r\n")
+    
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" })
+    const url = URL.createObjectURL(blob)
+    
+    return url
+  }
+
+  const handleExportToGoogleCalendar = (plan: SavedPlan) => {
+    // Google Calendar doesn't support multiple events in one URL
+    // So we'll open each event in a separate tab
+    if (plan.scheduledActivities.length > 1) {
+      alert(`Opening ${plan.scheduledActivities.length} Google Calendar tabs for your activities. Please allow pop-ups if prompted.`)
+    }
+    
+    plan.scheduledActivities.forEach((scheduledActivity, index) => {
+      const { activity, day, timeSlot } = scheduledActivity
+      
+      // Convert day and time to a proper date
+      const today = new Date()
+      const dayOfWeek = today.getDay() // 0 = Sunday, 1 = Monday, etc.
+      let targetDay = 0
+      
+      switch (day) {
+        case "friday":
+          targetDay = 5
+          break
+        case "saturday":
+          targetDay = 6
+          break
+        case "sunday":
+          targetDay = 0
+          break
+        case "monday":
+          targetDay = 1
+          break
+      }
+      
+      // Calculate days until target day
+      let daysUntilTarget = targetDay - dayOfWeek
+      if (daysUntilTarget <= 0) daysUntilTarget += 7
+      
+      const eventDate = new Date(today)
+      eventDate.setDate(today.getDate() + daysUntilTarget)
+      
+      // Parse time slot (e.g., "2:00 PM")
+      const [time, period] = timeSlot.split(" ")
+      const [hours, minutes] = time.split(":")
+      let hour24 = parseInt(hours)
+      if (period === "PM" && hour24 !== 12) hour24 += 12
+      if (period === "AM" && hour24 === 12) hour24 = 0
+      
+      const startTime = new Date(eventDate)
+      startTime.setHours(hour24, parseInt(minutes), 0, 0)
+      
+      // Estimate duration (default to 2 hours)
+      const endTime = new Date(startTime)
+      endTime.setHours(startTime.getHours() + 2)
+      
+      const formatDate = (date: Date) => {
+        return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z"
+      }
+      
+      const title = encodeURIComponent(activity.name)
+      const start = formatDate(startTime)
+      const end = formatDate(endTime)
+      const details = encodeURIComponent(
+        `Location: ${activity.location}\nDuration: ${activity.duration}\nCategory: ${activity.category}`
+      )
+      
+      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}`
+      
+      // Add a small delay between opening tabs to avoid browser blocking
+      setTimeout(() => {
+        window.open(url, "_blank")
+      }, index * 100)
+    })
+  }
+
+  const handleExportToAppleCalendar = (plan: SavedPlan) => {
+    const url = generateAppleCalendarUrl(plan)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = `${plan.name.replace(/[^a-z0-9]/gi, "_").toLowerCase()}_weekend_plan.ics`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -137,6 +303,28 @@ export function SavedPlansDialog({ children }: SavedPlansDialogProps) {
                             <Download className="w-3 h-3 mr-1" />
                             Load
                           </Button>
+                          {plan.scheduledActivities.length > 0 && (
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleExportToGoogleCalendar(plan)}
+                                className="h-8 px-2 hover:bg-blue-50 hover:text-blue-600"
+                                title="Export to Google Calendar"
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleExportToAppleCalendar(plan)}
+                                className="h-8 px-2 hover:bg-gray-50 hover:text-gray-600"
+                                title="Export to Apple Calendar"
+                              >
+                                <Calendar className="w-3 h-3" />
+                              </Button>
+                            </>
+                          )}
                           <Button
                             variant="ghost"
                             size="sm"
