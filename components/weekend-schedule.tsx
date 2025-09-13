@@ -301,13 +301,8 @@ export function WeekendSchedule() {
                 <Button variant="outline" size="sm">
                   Save Plan
                 </Button>
-              </SavedPlansDialog>
-              <EnhancedShareDialog>
-                <Button variant="outline" size="sm">
-                  Share
-                </Button>
-              </EnhancedShareDialog>
-              <Button variant="outline" onClick={clearSchedule} size="sm">
+              </SavedPlansDialog>         
+              <Button variant="outline" onClick={clearSchedule} size="sm" className="border-1 border-red-500 border-dashed hover:bg-red-100 hover:text-red-500">
                 Clear Schedule
               </Button>
             </div>

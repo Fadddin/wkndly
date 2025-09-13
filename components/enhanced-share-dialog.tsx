@@ -198,7 +198,18 @@ export function EnhancedShareDialog({ children }: EnhancedShareDialogProps) {
           {weekendDays.map((day) => {
             const dayActivities = activities
               .filter((sa) => sa.day === day.key)
-              .sort((a, b) => a.timeSlot.localeCompare(b.timeSlot))
+              .sort((a, b) => {
+                // Convert time slots to comparable format for proper chronological sorting
+                const timeToMinutes = (timeSlot: string) => {
+                  const [time, period] = timeSlot.split(' ')
+                  const [hours, minutes] = time.split(':').map(Number)
+                  let totalMinutes = hours * 60 + minutes
+                  if (period === 'PM' && hours !== 12) totalMinutes += 12 * 60
+                  if (period === 'AM' && hours === 12) totalMinutes -= 12 * 60
+                  return totalMinutes
+                }
+                return timeToMinutes(a.timeSlot) - timeToMinutes(b.timeSlot)
+              })
 
             if (dayActivities.length === 0) return null
 

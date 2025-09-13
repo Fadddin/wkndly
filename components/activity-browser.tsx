@@ -249,7 +249,7 @@ export function ActivityBrowser() {
             return (
               <Card
                 key={activity.id}
-                className={`relative cursor-pointer transition-all hover:shadow-md hover:scale-[1.02] border bg-card overflow-hidden ${
+                className={`relative cursor-pointer transition-all hover:shadow-md hover:scale-[1.02] mt-1 border bg-card overflow-hidden ${
                   isSelected ? "ring-2 ring-primary" : ""
                 } ${categoryAccent[activity.category] ?? ""} ${!isSelected && isRecommended ? "ring-1 ring-primary/30" : ""}`}
                 onClick={() => toggleActivity(activity)}
