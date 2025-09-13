@@ -314,7 +314,7 @@ export function SelectedActivitiesSidebar() {
                               e.stopPropagation()
                               removeActivity(activity.id)
                             }}
-                            className="h-5 w-5 sm:h-6 sm:w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive flex-shrink-0"
+                            className="h-5 w-5 sm:h-6 sm:w-6 p-0 opacity-50 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive flex-shrink-0"
                           >
                             <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                           </Button>
