@@ -285,9 +285,7 @@ export function SelectedActivitiesSidebar() {
                 social: "border-l-2 border-pink-300/50 hover:border-pink-400/60",
               }
 
-              if (!hasValidIcon) {
-                console.log("[v0] Invalid icon for activity:", activity.name, IconComponent)
-              }
+              
 
               return (
                 <Card
