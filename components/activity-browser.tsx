@@ -229,7 +229,7 @@ export function ActivityBrowser() {
               <div
                 ref={ref}
                 style={style}
-                className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4"
+                className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4 p-3"
               >
                 {children}
               </div>
@@ -293,15 +293,13 @@ export function ActivityBrowser() {
                     <div className="flex items-center gap-2">
                       <span>📍</span>
                       <PlaceSearchDialog activity={activity}>
-                        view
-                        <button
-                          className="underline underline-offset-2 hover:text-primary mx-1"
-                          onMouseDown={(e) => e.stopPropagation()}
-                          onPointerDown={(e) => e.stopPropagation()}
-                        >
-                          {activity.location}
-                        </button>
-                        in your location
+                        <span className="cursor-pointer">
+                          view
+                          <span className="underline underline-offset-2 hover:text-primary mx-1">
+                            {activity.location}
+                          </span>
+                          in your location
+                        </span>
                       </PlaceSearchDialog>
                       {(activity as any)?.googleMapsUrl && (
                         <a

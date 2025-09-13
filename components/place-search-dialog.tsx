@@ -182,8 +182,13 @@ export function PlaceSearchDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-       
-        <div role="button" tabIndex={0}>
+        <div 
+          role="button" 
+          tabIndex={0}
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           {children}
         </div>
       </DialogTrigger>
