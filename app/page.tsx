@@ -49,10 +49,10 @@ function WeekendlyAppContent() {
             </div>
 
             <div className="flex items-center gap-2">
-              {/* Holiday Notice */}
+              {/* Long Weekend Alert */}
               {upcomingHolidays.length > 0 && (
                 <div className="hidden md:block text-xs text-muted-foreground bg-muted/50 px-3 py-1 rounded-full">
-                  🎉 {upcomingHolidays[0].name} coming up on {upcomingHolidays[0].date}
+                  🎉 Long Weekend Alert: {upcomingHolidays[0].name} on {new Date(upcomingHolidays[0].date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
                 </div>
               )}
 

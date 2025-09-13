@@ -406,5 +406,11 @@ export function getUpcomingHolidays() {
   ]
 
   const today = new Date()
-  return holidays.filter((holiday) => new Date(holiday.date) > today).slice(0, 3)
+  
+  // Filter holidays that are upcoming and fall on Sunday (0) or Monday (1)
+  return holidays.filter((holiday) => {
+    const holidayDate = new Date(holiday.date)
+    const dayOfWeek = holidayDate.getDay() // 0 = Sunday, 1 = Monday, etc.
+    return holidayDate > today && (dayOfWeek === 0 || dayOfWeek === 1)
+  }).slice(0, 3)
 }
