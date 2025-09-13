@@ -311,122 +311,356 @@ export function WeekendSchedule() {
 
         {/* Weekend Grid - Scrollable */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
-          <div
-            className={`grid gap-4 md:gap-6 ${
-              isLongWeekend 
-                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4" 
-                : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2"
-            }`}
-          >
-            {weekendDays.map((day) => (
-              <Card key={day.id} className="h-fit w-full min-w-0">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Calendar className="w-4 h-4" />
-                    {day.name}
-                  </CardTitle>
-                  <CardDescription>
-                    {scheduledActivities.filter((sa) => sa.day === day.key).length} activities scheduled
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2 min-w-0">
-                  {timeSlots.map((timeSlot) => {
-                    const scheduledActivity = getScheduledActivity(day.key, timeSlot)
-                    const isDragOver = !isMobile && dragOverSlot?.day === day.key && dragOverSlot?.timeSlot === timeSlot
-                    const isClickTarget = isMobile && selectedActivityForPlacement && !scheduledActivity
+          {isLongWeekend ? (
+            <div className="space-y-8">
+              {/* First Section: Friday & Saturday */}
+              <div>
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  Weekend Start
+                </h3>
+                <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2">
+                  {weekendDays.slice(0, 2).map((day) => (
+                    <Card key={day.id} className="w-full min-w-0 h-[600px] flex flex-col">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          <Calendar className="w-4 h-4" />
+                          {day.name}
+                        </CardTitle>
+                        <CardDescription>
+                          {scheduledActivities.filter((sa) => sa.day === day.key).length} activities scheduled
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="flex-1 overflow-y-auto space-y-2 min-w-0">
+                        {timeSlots.map((timeSlot) => {
+                          const scheduledActivity = getScheduledActivity(day.key, timeSlot)
+                          const isDragOver = !isMobile && dragOverSlot?.day === day.key && dragOverSlot?.timeSlot === timeSlot
+                          const isClickTarget = isMobile && selectedActivityForPlacement && !scheduledActivity
 
-                    return (
-                      <div
-                        key={timeSlot}
-                        className={`flex items-center gap-2 md:gap-3 p-2 md:p-3 border rounded-lg min-h-[50px] md:min-h-[60px] transition-all ${
-                          isDragOver 
-                            ? "border-primary bg-primary/10 border-dashed" 
-                            : isClickTarget 
-                            ? "border-primary/50 bg-primary/5 cursor-pointer hover:border-primary hover:bg-primary/10" 
-                            : "border-border"
-                        }`}
-                        onDragOver={(e) => handleDragOver(e, day.key, timeSlot)}
-                        onDragLeave={handleDragLeave}
-                        onDrop={(e) => handleDrop(e, day.key, timeSlot)}
-                        onClick={() => handleSlotClick(day.key, timeSlot)}
-                      >
-                        <div className="w-12 md:w-16 text-xs font-medium text-muted-foreground flex-shrink-0">{timeSlot}</div>
-                        <div className="flex-1 min-w-0 overflow-hidden">
-                          {scheduledActivity ? (
+                          return (
                             <div
-                              className={`flex items-center gap-2 md:gap-3 p-1 rounded border bg-card ${
-                                isMobile ? "cursor-pointer" : "cursor-move"
-                              } ${categoryAccent[scheduledActivity.activity.category] ?? ""}`}
-                              draggable={!isMobile}
-                              onDragStart={(e) => handleDragStart(e, scheduledActivity.activity)}
-                              onDragEnd={handleDragEnd}
+                              key={timeSlot}
+                              className={`flex items-center gap-2 md:gap-3 p-2 md:p-3 border rounded-lg min-h-[50px] md:min-h-[60px] transition-all ${
+                                isDragOver 
+                                  ? "border-primary bg-primary/10 border-dashed" 
+                                  : isClickTarget 
+                                  ? "border-primary/50 bg-primary/5 cursor-pointer hover:border-primary hover:bg-primary/10" 
+                                  : "border-border"
+                              }`}
+                              onDragOver={(e) => handleDragOver(e, day.key, timeSlot)}
+                              onDragLeave={handleDragLeave}
+                              onDrop={(e) => handleDrop(e, day.key, timeSlot)}
+                              onClick={() => handleSlotClick(day.key, timeSlot)}
                             >
-                              {!isMobile && <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />}
-                              <div className={`p-1.5 rounded ${scheduledActivity.activity.color} flex-shrink-0`}>
-                                <scheduledActivity.activity.icon className="w-3 h-3" />
-                              </div>
+                              <div className="w-12 md:w-16 text-xs font-medium text-muted-foreground flex-shrink-0">{timeSlot}</div>
                               <div className="flex-1 min-w-0 overflow-hidden">
-                                <p className="text-xs md:text-sm font-medium truncate">{scheduledActivity.activity.name}</p>
-                                <div className="text-xs text-muted-foreground">
-                                  <span>{scheduledActivity.activity.duration}</span>
-                                  <div className="break-all leading-tight overflow-hidden">• {scheduledActivity.activity.location}</div>
+                                {scheduledActivity ? (
+                                  <div
+                                    className={`flex items-center gap-2 md:gap-3 p-1 rounded border bg-card ${
+                                      isMobile ? "cursor-pointer" : "cursor-move"
+                                    } ${categoryAccent[scheduledActivity.activity.category] ?? ""}`}
+                                    draggable={!isMobile}
+                                    onDragStart={(e) => handleDragStart(e, scheduledActivity.activity)}
+                                    onDragEnd={handleDragEnd}
+                                  >
+                                    {!isMobile && <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />}
+                                    <div className={`p-1.5 rounded ${scheduledActivity.activity.color} flex-shrink-0`}>
+                                      <scheduledActivity.activity.icon className="w-3 h-3" />
+                                    </div>
+                                    <div className="flex-1 min-w-0 overflow-hidden">
+                                      <p className="text-xs md:text-sm font-medium truncate">{scheduledActivity.activity.name}</p>
+                                      <div className="text-xs text-muted-foreground">
+                                        <span>{scheduledActivity.activity.duration}</span>
+                                        <div className="break-all leading-tight overflow-hidden">• {scheduledActivity.activity.location}</div>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+                                      <select
+                                        className="text-xs border rounded px-1 py-0.5 bg-background hidden md:block"
+                                        value={activityVibes[scheduledActivity.activity.id] || ""}
+                                        onChange={(e) =>
+                                          dispatch({
+                                            type: "SET_ACTIVITY_VIBE",
+                                            payload: {
+                                              activityId: scheduledActivity.activity.id,
+                                              vibe: (e.target.value || null) as ActivityVibe | null,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        <option value="">Vibe</option>
+                                        <option value="happy">Happy</option>
+                                        <option value="relaxed">Relaxed</option>
+                                        <option value="energetic">Energetic</option>
+                                      </select>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          removeFromSchedule(scheduledActivity.activity.id)
+                                        }}
+                                        className="h-5 w-5 md:h-6 md:w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
+                                      >
+                                        ×
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className={`text-xs md:text-sm text-muted-foreground italic ${
+                                    isDragOver 
+                                      ? "text-primary" 
+                                      : isClickTarget 
+                                      ? "text-primary font-medium" 
+                                      : ""
+                                  }`}>
+                                    {isDragOver 
+                                      ? "Drop activity here" 
+                                      : isClickTarget 
+                                      ? "Tap to place here" 
+                                      : "Available time slot"}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Second Section: Sunday & Monday */}
+              <div>
+                <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  Weekend End
+                </h3>
+                <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2">
+                  {weekendDays.slice(2, 4).map((day) => (
+                    <Card key={day.id} className="w-full min-w-0 h-[600px] flex flex-col">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          <Calendar className="w-4 h-4" />
+                          {day.name}
+                        </CardTitle>
+                        <CardDescription>
+                          {scheduledActivities.filter((sa) => sa.day === day.key).length} activities scheduled
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="flex-1 overflow-y-auto space-y-2 min-w-0">
+                        {timeSlots.map((timeSlot) => {
+                          const scheduledActivity = getScheduledActivity(day.key, timeSlot)
+                          const isDragOver = !isMobile && dragOverSlot?.day === day.key && dragOverSlot?.timeSlot === timeSlot
+                          const isClickTarget = isMobile && selectedActivityForPlacement && !scheduledActivity
+
+                          return (
+                            <div
+                              key={timeSlot}
+                              className={`flex items-center gap-2 md:gap-3 p-2 md:p-3 border rounded-lg min-h-[50px] md:min-h-[60px] transition-all ${
+                                isDragOver 
+                                  ? "border-primary bg-primary/10 border-dashed" 
+                                  : isClickTarget 
+                                  ? "border-primary/50 bg-primary/5 cursor-pointer hover:border-primary hover:bg-primary/10" 
+                                  : "border-border"
+                              }`}
+                              onDragOver={(e) => handleDragOver(e, day.key, timeSlot)}
+                              onDragLeave={handleDragLeave}
+                              onDrop={(e) => handleDrop(e, day.key, timeSlot)}
+                              onClick={() => handleSlotClick(day.key, timeSlot)}
+                            >
+                              <div className="w-12 md:w-16 text-xs font-medium text-muted-foreground flex-shrink-0">{timeSlot}</div>
+                              <div className="flex-1 min-w-0 overflow-hidden">
+                                {scheduledActivity ? (
+                                  <div
+                                    className={`flex items-center gap-2 md:gap-3 p-1 rounded border bg-card ${
+                                      isMobile ? "cursor-pointer" : "cursor-move"
+                                    } ${categoryAccent[scheduledActivity.activity.category] ?? ""}`}
+                                    draggable={!isMobile}
+                                    onDragStart={(e) => handleDragStart(e, scheduledActivity.activity)}
+                                    onDragEnd={handleDragEnd}
+                                  >
+                                    {!isMobile && <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />}
+                                    <div className={`p-1.5 rounded ${scheduledActivity.activity.color} flex-shrink-0`}>
+                                      <scheduledActivity.activity.icon className="w-3 h-3" />
+                                    </div>
+                                    <div className="flex-1 min-w-0 overflow-hidden">
+                                      <p className="text-xs md:text-sm font-medium truncate">{scheduledActivity.activity.name}</p>
+                                      <div className="text-xs text-muted-foreground">
+                                        <span>{scheduledActivity.activity.duration}</span>
+                                        <div className="break-all leading-tight overflow-hidden">• {scheduledActivity.activity.location}</div>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+                                      <select
+                                        className="text-xs border rounded px-1 py-0.5 bg-background hidden md:block"
+                                        value={activityVibes[scheduledActivity.activity.id] || ""}
+                                        onChange={(e) =>
+                                          dispatch({
+                                            type: "SET_ACTIVITY_VIBE",
+                                            payload: {
+                                              activityId: scheduledActivity.activity.id,
+                                              vibe: (e.target.value || null) as ActivityVibe | null,
+                                            },
+                                          })
+                                        }
+                                      >
+                                        <option value="">Vibe</option>
+                                        <option value="happy">Happy</option>
+                                        <option value="relaxed">Relaxed</option>
+                                        <option value="energetic">Energetic</option>
+                                      </select>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          removeFromSchedule(scheduledActivity.activity.id)
+                                        }}
+                                        className="h-5 w-5 md:h-6 md:w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
+                                      >
+                                        ×
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className={`text-xs md:text-sm text-muted-foreground italic ${
+                                    isDragOver 
+                                      ? "text-primary" 
+                                      : isClickTarget 
+                                      ? "text-primary font-medium" 
+                                      : ""
+                                  }`}>
+                                    {isDragOver 
+                                      ? "Drop activity here" 
+                                      : isClickTarget 
+                                      ? "Tap to place here" 
+                                      : "Available time slot"}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
+              {weekendDays.map((day) => (
+                <Card key={day.id} className="h-fit w-full min-w-0">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Calendar className="w-4 h-4" />
+                      {day.name}
+                    </CardTitle>
+                    <CardDescription>
+                      {scheduledActivities.filter((sa) => sa.day === day.key).length} activities scheduled
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2 min-w-0">
+                    {timeSlots.map((timeSlot) => {
+                      const scheduledActivity = getScheduledActivity(day.key, timeSlot)
+                      const isDragOver = !isMobile && dragOverSlot?.day === day.key && dragOverSlot?.timeSlot === timeSlot
+                      const isClickTarget = isMobile && selectedActivityForPlacement && !scheduledActivity
+
+                      return (
+                        <div
+                          key={timeSlot}
+                          className={`flex items-center gap-2 md:gap-3 p-2 md:p-3 border rounded-lg min-h-[50px] md:min-h-[60px] transition-all ${
+                            isDragOver 
+                              ? "border-primary bg-primary/10 border-dashed" 
+                              : isClickTarget 
+                              ? "border-primary/50 bg-primary/5 cursor-pointer hover:border-primary hover:bg-primary/10" 
+                              : "border-border"
+                          }`}
+                          onDragOver={(e) => handleDragOver(e, day.key, timeSlot)}
+                          onDragLeave={handleDragLeave}
+                          onDrop={(e) => handleDrop(e, day.key, timeSlot)}
+                          onClick={() => handleSlotClick(day.key, timeSlot)}
+                        >
+                          <div className="w-12 md:w-16 text-xs font-medium text-muted-foreground flex-shrink-0">{timeSlot}</div>
+                          <div className="flex-1 min-w-0 overflow-hidden">
+                            {scheduledActivity ? (
+                              <div
+                                className={`flex items-center gap-2 md:gap-3 p-1 rounded border bg-card ${
+                                  isMobile ? "cursor-pointer" : "cursor-move"
+                                } ${categoryAccent[scheduledActivity.activity.category] ?? ""}`}
+                                draggable={!isMobile}
+                                onDragStart={(e) => handleDragStart(e, scheduledActivity.activity)}
+                                onDragEnd={handleDragEnd}
+                              >
+                                {!isMobile && <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />}
+                                <div className={`p-1.5 rounded ${scheduledActivity.activity.color} flex-shrink-0`}>
+                                  <scheduledActivity.activity.icon className="w-3 h-3" />
+                                </div>
+                                <div className="flex-1 min-w-0 overflow-hidden">
+                                  <p className="text-xs md:text-sm font-medium truncate">{scheduledActivity.activity.name}</p>
+                                  <div className="text-xs text-muted-foreground">
+                                    <span>{scheduledActivity.activity.duration}</span>
+                                    <div className="break-all leading-tight overflow-hidden">• {scheduledActivity.activity.location}</div>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+                                  <select
+                                    className="text-xs border rounded px-1 py-0.5 bg-background hidden md:block"
+                                    value={activityVibes[scheduledActivity.activity.id] || ""}
+                                    onChange={(e) =>
+                                      dispatch({
+                                        type: "SET_ACTIVITY_VIBE",
+                                        payload: {
+                                          activityId: scheduledActivity.activity.id,
+                                          vibe: (e.target.value || null) as ActivityVibe | null,
+                                        },
+                                      })
+                                    }
+                                  >
+                                    <option value="">Vibe</option>
+                                    <option value="happy">Happy</option>
+                                    <option value="relaxed">Relaxed</option>
+                                    <option value="energetic">Energetic</option>
+                                  </select>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      removeFromSchedule(scheduledActivity.activity.id)
+                                    }}
+                                    className="h-5 w-5 md:h-6 md:w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
+                                  >
+                                    ×
+                                  </Button>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
-                                <select
-                                  className="text-xs border rounded px-1 py-0.5 bg-background hidden md:block"
-                                  value={activityVibes[scheduledActivity.activity.id] || ""}
-                                  onChange={(e) =>
-                                    dispatch({
-                                      type: "SET_ACTIVITY_VIBE",
-                                      payload: {
-                                        activityId: scheduledActivity.activity.id,
-                                        vibe: (e.target.value || null) as ActivityVibe | null,
-                                      },
-                                    })
-                                  }
-                                >
-                                  <option value="">Vibe</option>
-                                  <option value="happy">Happy</option>
-                                  <option value="relaxed">Relaxed</option>
-                                  <option value="energetic">Energetic</option>
-                                </select>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    removeFromSchedule(scheduledActivity.activity.id)
-                                  }}
-                                  className="h-5 w-5 md:h-6 md:w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
-                                >
-                                  ×
-                                </Button>
+                            ) : (
+                              <div className={`text-xs md:text-sm text-muted-foreground italic ${
+                                isDragOver 
+                                  ? "text-primary" 
+                                  : isClickTarget 
+                                  ? "text-primary font-medium" 
+                                  : ""
+                              }`}>
+                                {isDragOver 
+                                  ? "Drop activity here" 
+                                  : isClickTarget 
+                                  ? "Tap to place here" 
+                                  : "Available time slot"}
                               </div>
-                            </div>
-                          ) : (
-                            <div className={`text-xs md:text-sm text-muted-foreground italic ${
-                              isDragOver 
-                                ? "text-primary" 
-                                : isClickTarget 
-                                ? "text-primary font-medium" 
-                                : ""
-                            }`}>
-                              {isDragOver 
-                                ? "Drop activity here" 
-                                : isClickTarget 
-                                ? "Tap to place here" 
-                                : "Available time slot"}
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )
-                  })}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                      )
+                    })}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
