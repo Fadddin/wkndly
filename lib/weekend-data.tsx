@@ -334,7 +334,7 @@ export const categories = [
   { id: "social", name: "Social" },
 ]
 
-export function getTimeSlots(isLongWeekend: boolean) {
+export function getTimeSlots(longWeekendOption: "none" | "friday" | "monday" | "both") {
   return [
     "8:00 AM",
     "9:00 AM",
@@ -354,21 +354,33 @@ export function getTimeSlots(isLongWeekend: boolean) {
   ]
 }
 
-export function getWeekendDays(isLongWeekend: boolean) {
+export function getWeekendDays(longWeekendOption: "none" | "friday" | "monday" | "both") {
   const baseDays = [
     { id: 1, name: "Saturday", key: "saturday" as const },
     { id: 2, name: "Sunday", key: "sunday" as const },
   ]
 
-  if (isLongWeekend) {
-    return [
-      { id: 0, name: "Friday", key: "friday" as const },
-      ...baseDays,
-      { id: 3, name: "Monday", key: "monday" as const },
-    ]
+  switch (longWeekendOption) {
+    case "friday":
+      return [
+        { id: 0, name: "Friday", key: "friday" as const },
+        ...baseDays,
+      ]
+    case "monday":
+      return [
+        ...baseDays,
+        { id: 3, name: "Monday", key: "monday" as const },
+      ]
+    case "both":
+      return [
+        { id: 0, name: "Friday", key: "friday" as const },
+        ...baseDays,
+        { id: 3, name: "Monday", key: "monday" as const },
+      ]
+    case "none":
+    default:
+      return baseDays
   }
-
-  return baseDays
 }
 
 export function getUpcomingHolidays() {

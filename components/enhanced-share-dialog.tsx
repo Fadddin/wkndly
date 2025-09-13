@@ -36,14 +36,14 @@ const posterFormats: { value: PosterFormat; label: string; description: string }
 
 export function EnhancedShareDialog({ children }: EnhancedShareDialogProps) {
   const { state } = useWeekend()
-  const { savedPlans, userName, isLongWeekend } = state
+  const { savedPlans, userName, longWeekendOption } = state
   const [open, setOpen] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<SavedPlan | null>(null)
   const [selectedFormat, setSelectedFormat] = useState<PosterFormat>("elegant")
   const [isGenerating, setIsGenerating] = useState(false)
   const posterRef = useRef<HTMLDivElement>(null)
 
-  const weekendDays = getWeekendDays(isLongWeekend)
+  const weekendDays = getWeekendDays(longWeekendOption)
 
   const generatePoster = async () => {
     if (!selectedPlan || !posterRef.current) return

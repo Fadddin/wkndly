@@ -419,18 +419,8 @@ export function WeekendSchedule() {
 
         {/* Weekend Grid - Scrollable */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
-          <div className="space-y-6">
-            {/* First row - up to 2 days */}
-            <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 w-full">
-              {weekendDays.slice(0, 2).map(renderDayCard)}
-            </div>
-            
-            {/* Second row - remaining days */}
-            {weekendDays.length > 2 && (
-              <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 w-full">
-                {weekendDays.slice(2).map(renderDayCard)}
-              </div>
-            )}
+          <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+            {weekendDays.map(renderDayCard)}
           </div>
         </div>
       </div>

@@ -6,6 +6,8 @@ import { activities, themes } from "./weekend-data"
 
 export type WeekendDay = "saturday" | "sunday" | "friday" | "monday"
 
+export type LongWeekendOption = "none" | "friday" | "monday" | "both"
+
 export interface ScheduledActivity {
   activity: (typeof activities)[0]
   day: WeekendDay
@@ -21,6 +23,7 @@ export interface SavedPlan {
   scheduledActivities: ScheduledActivity[]
   selectedActivities: typeof activities
   theme: keyof typeof themes
+  longWeekendOption: LongWeekendOption
   activityVibes?: Record<number, ActivityVibe>
 }
 
@@ -32,7 +35,7 @@ interface WeekendState {
   currentView: "browse" | "schedule"
   selectedTheme: keyof typeof themes
   userName: string
-  isLongWeekend: boolean
+  longWeekendOption: LongWeekendOption
   autoSave: boolean
   savedPlans: SavedPlan[]
   draggedActivity: (typeof activities)[0] | null
@@ -52,7 +55,7 @@ type WeekendAction =
   | { type: "SET_CURRENT_VIEW"; payload: "browse" | "schedule" }
   | { type: "SET_SELECTED_THEME"; payload: keyof typeof themes }
   | { type: "SET_USER_NAME"; payload: string }
-  | { type: "SET_IS_LONG_WEEKEND"; payload: boolean }
+  | { type: "SET_LONG_WEEKEND_OPTION"; payload: LongWeekendOption }
   | { type: "SET_AUTO_SAVE"; payload: boolean }
   | { type: "SET_SAVED_PLANS"; payload: SavedPlan[] }
   | { type: "ADD_SAVED_PLAN"; payload: SavedPlan }
@@ -71,7 +74,7 @@ const initialState: WeekendState = {
   currentView: "browse",
   selectedTheme: "default",
   userName: "",
-  isLongWeekend: false,
+  longWeekendOption: "none",
   autoSave: true,
   savedPlans: [],
   draggedActivity: null,
@@ -138,8 +141,8 @@ function weekendReducer(state: WeekendState, action: WeekendAction): WeekendStat
       return { ...state, selectedTheme: action.payload }
     case "SET_USER_NAME":
       return { ...state, userName: action.payload }
-    case "SET_IS_LONG_WEEKEND":
-      return { ...state, isLongWeekend: action.payload }
+    case "SET_LONG_WEEKEND_OPTION":
+      return { ...state, longWeekendOption: action.payload }
     case "SET_AUTO_SAVE":
       return { ...state, autoSave: action.payload }
     case "SET_SAVED_PLANS":
@@ -252,6 +255,7 @@ function reconstructSavedPlans(plansData: any[]): SavedPlan[] {
       ...plan,
       selectedActivities: reconstructedSelected,
       scheduledActivities: reconstructedScheduled,
+      longWeekendOption: plan.longWeekendOption || (plan.isLongWeekend ? "both" : "none"),
     }
   })
 }
@@ -269,6 +273,7 @@ export function WeekendProvider({ children }: { children: React.ReactNode }) {
     const savedSelectedActivityIds = loadFromStorage("weekendly-selected-activity-ids", [])
     const savedScheduledActivitiesData = loadFromStorage("weekendly-scheduled-activities", [])
     const savedIsLongWeekend = loadFromStorage("weekendly-long-weekend", false)
+    const savedLongWeekendOption = loadFromStorage("weekendly-long-weekend-option", "none")
     const savedAutoSave = loadFromStorage("weekendly-auto-save", true)
     const savedPlansRaw = loadFromStorage("weekendly-saved-plans", [])
     const savedVibes = loadFromStorage("weekendly-activity-vibes", {})
@@ -280,7 +285,14 @@ export function WeekendProvider({ children }: { children: React.ReactNode }) {
       type: "SET_SCHEDULED_ACTIVITIES",
       payload: reconstructScheduledActivities(savedScheduledActivitiesData),
     })
-    dispatch({ type: "SET_IS_LONG_WEEKEND", payload: savedIsLongWeekend })
+    
+    // Migration: Convert old boolean to new option format
+    let longWeekendOption: LongWeekendOption = savedLongWeekendOption
+    if (savedIsLongWeekend && savedLongWeekendOption === "none") {
+      longWeekendOption = "both" // Default to both for existing users
+    }
+    
+    dispatch({ type: "SET_LONG_WEEKEND_OPTION", payload: longWeekendOption })
     dispatch({ type: "SET_AUTO_SAVE", payload: savedAutoSave })
     dispatch({ type: "SET_SAVED_PLANS", payload: reconstructSavedPlans(savedPlansRaw) })
     dispatch({ type: "SET_ACTIVITY_VIBES", payload: savedVibes })
@@ -291,6 +303,7 @@ export function WeekendProvider({ children }: { children: React.ReactNode }) {
         ...plan,
         selectedActivities: plan.selectedActivities || [],
         scheduledActivities: plan.scheduledActivities || [],
+        longWeekendOption: plan.longWeekendOption || (plan.isLongWeekend ? "both" : "none"),
       }))
       saveToStorage("weekendly-saved-plans", migrated)
       localStorage.setItem("weekendly-migrated", "true")
@@ -332,7 +345,7 @@ export function WeekendProvider({ children }: { children: React.ReactNode }) {
       saveToStorage("weekendly-scheduled-activities", state.scheduledActivities)
       saveToStorage("weekendly-theme", state.selectedTheme)
       saveToStorage("weekendly-username", state.userName)
-      saveToStorage("weekendly-long-weekend", state.isLongWeekend)
+      saveToStorage("weekendly-long-weekend-option", state.longWeekendOption)
       saveToStorage("weekendly-auto-save", state.autoSave)
       saveToStorage("weekendly-activity-vibes", state.activityVibes)
     }

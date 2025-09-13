@@ -22,11 +22,11 @@ interface ExportShareDialogProps {
 
 export function ExportShareDialog({ children }: ExportShareDialogProps) {
   const { state } = useWeekend()
-  const { scheduledActivities, userName, selectedTheme, isLongWeekend } = state
+  const { scheduledActivities, userName, selectedTheme, longWeekendOption } = state
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  const weekendDays = getWeekendDays(isLongWeekend)
+  const weekendDays = getWeekendDays(longWeekendOption)
 
   const generateScheduleText = () => {
     const header = `${userName ? `${userName}'s ` : ""}Weekend Plan\n${"=".repeat(30)}\n\n`

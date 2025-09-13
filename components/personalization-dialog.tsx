@@ -15,7 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Settings, Palette } from "lucide-react"
+import { Settings, Palette, Calendar } from "lucide-react"
 import { useWeekend } from "@/lib/weekend-context"
 import { themes } from "@/lib/weekend-data"
 
@@ -25,7 +25,7 @@ interface PersonalizationDialogProps {
 
 export function PersonalizationDialog({ children }: PersonalizationDialogProps) {
   const { state, dispatch } = useWeekend()
-  const { selectedTheme, userName, isLongWeekend, autoSave } = state
+  const { selectedTheme, userName, longWeekendOption, autoSave } = state
   const [open, setOpen] = useState(false)
 
   const handleThemeChange = (themeId: keyof typeof themes) => {
@@ -36,8 +36,8 @@ export function PersonalizationDialog({ children }: PersonalizationDialogProps) 
     dispatch({ type: "SET_USER_NAME", payload: name })
   }
 
-  const handleLongWeekendToggle = (enabled: boolean) => {
-    dispatch({ type: "SET_IS_LONG_WEEKEND", payload: enabled })
+  const handleLongWeekendOptionChange = (option: "none" | "friday" | "monday" | "both") => {
+    dispatch({ type: "SET_LONG_WEEKEND_OPTION", payload: option })
   }
 
   const handleAutoSaveToggle = (enabled: boolean) => {
@@ -97,16 +97,37 @@ export function PersonalizationDialog({ children }: PersonalizationDialogProps) 
             </div>
           </div>
 
+          {/* Long Weekend Options */}
+          <div className="space-y-3">
+            <Label className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Long Weekend Options
+            </Label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { value: "none", label: "Weekend Only", description: "Saturday & Sunday" },
+                { value: "friday", label: "Friday Start", description: "Friday to Sunday" },
+                { value: "monday", label: "Monday End", description: "Saturday to Monday" },
+                { value: "both", label: "Long Weekend", description: "Friday to Monday" },
+              ].map((option) => (
+                <Button
+                  key={option.value}
+                  variant={longWeekendOption === option.value ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleLongWeekendOptionChange(option.value as "none" | "friday" | "monday" | "both")}
+                  className="justify-start h-auto w-full p-3"
+                >
+                  <div className="text-left flex-1 min-w-0 overflow-hidden">
+                    <div className="text-sm font-medium truncate">{option.label}</div>
+                    <div className="text-xs opacity-70 break-words whitespace-normal leading-tight line-clamp-2">{option.description}</div>
+                  </div>
+                </Button>
+              ))}
+            </div>
+          </div>
+
           {/* Settings */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Long Weekend Mode</Label>
-                <p className="text-sm text-muted-foreground">Include Friday and Monday</p>
-              </div>
-              <Switch checked={isLongWeekend} onCheckedChange={handleLongWeekendToggle} />
-            </div>
-
             
           </div>
         </div>
