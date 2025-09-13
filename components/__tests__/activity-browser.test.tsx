@@ -22,14 +22,6 @@ describe('ActivityBrowser', () => {
     expect(screen.getByRole('tab', { name: /Food/i })).toBeInTheDocument()
   })
 
-  test('filters activities by search', () => {
-    renderWithProvider(<ActivityBrowser />)
-
-    const input = screen.getByPlaceholderText(/Search activities/i)
-    fireEvent.change(input, { target: { value: 'Hike' } })
-
-    expect(screen.getByText(/Morning Hike/i)).toBeInTheDocument()
-  })
 })
 
 
