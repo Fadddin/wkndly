@@ -249,7 +249,7 @@ export function ActivityBrowser() {
             return (
               <Card
                 key={activity.id}
-                className={`relative cursor-pointer transition-all hover:shadow-md hover:scale-[1.02] mt-1 border bg-card overflow-hidden ${
+                className={`relative cursor-pointer transition-all hover:shadow-md hover:scale-[1.02] mt-1 border bg-card overflow-hidden h-full flex flex-col ${
                   isSelected ? "ring-2 ring-primary" : ""
                 } ${categoryAccent[activity.category] ?? ""} ${!isSelected && isRecommended ? "ring-1 ring-primary/30" : ""}`}
                 onClick={() => toggleActivity(activity)}
@@ -262,7 +262,7 @@ export function ActivityBrowser() {
                     />
                   </div>
                 )}
-                <CardHeader className="pb-3">
+                <CardHeader className="pb-3 flex-shrink-0">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-lg ${activity.color}`}>
@@ -284,48 +284,52 @@ export function ActivityBrowser() {
                     )}
                   </div>
                 </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
-                    <div className="flex items-center gap-1">
-                      <span>⏱️</span>
-                      {activity.duration}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>📍</span>
-                      <PlaceSearchDialog activity={activity}>
-                        <span className="cursor-pointer">
-                          view
-                          <span className="underline underline-offset-2 hover:text-primary mx-1">
-                            {activity.location}
+                <CardContent className="pt-0 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
+                      <div className="flex items-center gap-1">
+                        <span>⏱️</span>
+                        {activity.duration}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span>📍</span>
+                        <PlaceSearchDialog activity={activity}>
+                          <span className="cursor-pointer">
+                            view
+                            <span className="underline underline-offset-2 hover:text-primary mx-1">
+                              {activity.location}
+                            </span>
+                            in your location
                           </span>
-                          in your location
-                        </span>
-                      </PlaceSearchDialog>
-                      {(activity as any)?.googleMapsUrl && (
-                        <a
-                          href={(activity as any).googleMapsUrl as string}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:underline text-primary"
-                          onMouseDown={(e) => e.stopPropagation()}
-                          onPointerDown={(e) => e.stopPropagation()}
-                        >
-                          Open in Maps
-                        </a>
-                      )}
+                        </PlaceSearchDialog>
+                        {(activity as any)?.googleMapsUrl && (
+                          <a
+                            href={(activity as any).googleMapsUrl as string}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:underline text-primary"
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onPointerDown={(e) => e.stopPropagation()}
+                          >
+                            Open in Maps
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <Badge variant="secondary" className="text-xs">
-                    {activity.mood}
-                  </Badge>
-                  {isRecommended && (
-                    <Badge
-                      variant="outline"
-                      className="text-xs text-primary border-primary absolute bottom-3 right-3"
-                    >
-                      Recommended
+                  <div className="flex items-center justify-between">
+                    <Badge variant="secondary" className="text-xs">
+                      {activity.mood}
                     </Badge>
-                  )}
+                    {isRecommended && (
+                      <Badge
+                        variant="outline"
+                        className="text-xs text-primary border-primary"
+                      >
+                        Recommended
+                      </Badge>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )
